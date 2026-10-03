@@ -4,9 +4,10 @@
 [![React](https://img.shields.io/badge/React-19.2.8-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Pages Pre-rendered](https://img.shields.io/badge/Pages%20Pre--rendered-75%2F75%20SSG-emerald?style=for-the-badge)](/)
+[![Mobile Responsive](https://img.shields.io/badge/Mobile-100%25%20Responsive-purple?style=for-the-badge)](/)
 [![Zero UI Bloat](https://img.shields.io/badge/External%20UI%20Libs-0%20(Pure%20CSS)-orange?style=for-the-badge)](/)
 
-> A comprehensive, production-grade interactive engineering reference and master curriculum covering **30 retrieval-augmented generation (RAG) industry specifications**, **30 autonomous AI agent architectures**, **12 agentic patterns**, production **LLMOps/MLOps telemetry**, the **modern inference stack & MCP**, **30 Python concurrency building blocks**, **classical ML foundations**, and **transformer training pipelines**.
+> A comprehensive, production-grade interactive engineering reference and master curriculum covering **30 retrieval-augmented generation (RAG) industry specifications**, **30 autonomous AI agent architectures**, **12 agentic patterns**, production **LLMOps/MLOps telemetry**, the **modern inference stack & MCP**, **37 Python fundamental & concurrency building blocks**, **classical ML foundations**, and **transformer training pipelines**.
 
 ---
 
@@ -25,6 +26,7 @@
 - [Application Routes](#-application-routes)
 - [Hand-Authored Architecture Diagrams](#-hand-authored-architecture-diagrams)
 - [The 7-Theme Contextual Design System](#-the-7-theme-contextual-design-system)
+- [Mobile-First Responsive Engineering](#-mobile-first-responsive-engineering)
 - [Repository Structure](#-repository-structure)
 - [Quick Start](#-quick-start)
 - [Extending the Content](#-extending-the-content)
@@ -39,7 +41,7 @@
 - Tool schemas, autonomy levels, failure modes, compensating transactions, and blast radius calculations.
 - Hard production metrics and verifiable **Ship Gates** (e.g., latency percentiles, cost limits, recall floors).
 
-The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** into 75 high-performance static pages, shipping with zero heavy client UI libraries, 12 inline hand-drawn SVG system diagrams, and 7 contextual themes.
+The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** into 75 high-performance static pages, shipping with zero heavy client UI libraries, 13 inline hand-drawn SVG system diagrams, 7 contextual themes, and complete mobile responsiveness.
 
 ---
 
@@ -85,13 +87,15 @@ The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** in
 
 ### 5. Python Foundations & Concurrency
 - **37 Worked Production Snippets**: From bedrock language mechanics to high-throughput concurrency:
-  - **Memory & Identity**: Object mutability, reference assignment, `is` vs `==`, and deep copying nested states.
-  - **Text & Unicode**: String cleaning, prefix/suffix removal, and NFKC unicode normalization for consistent embedding tokens.
+  - **Memory & Identity**: Object mutability, reference assignment, `is` vs `==`, and deep copying nested state dicts.
+  - **Text & Unicode**: String cleaning, prefix/suffix removal (`removeprefix`), and NFKC unicode normalization for consistent embedding tokens.
+  - **Containers & Selection**: Lists, dicts, sets, tuples, frozensets, deques, heaps, bytearrays, and slots dataclasses evaluated by access complexity.
+  - **Loops & Control Flow**: Comprehensions, generator expressions, stateful loops, and the clean `for...else` search fallback pattern.
   - **Scope & Closures**: LEGB resolution rules, `nonlocal` state counters, and loop-variable late-binding capture fixes.
   - **Object-Oriented Design**: Clean OOP, `__slots__` memory optimization (~60% RAM reduction), `__hash__` and `@property`.
-  - **Iterators & Builtins**: The iterator protocol, safe unpacking with `zip(strict=True)`, `enumerate`, and multi-attribute sorting.
+  - **Iterators & Builtins**: The iterator protocol, safe unpacking with `zip(strict=True)`, `enumerate(start=1)`, and multi-attribute sorting keys.
   - **Robust Exception Flow**: `try / except / else / finally` mechanics and causal traceback chaining (`raise ... from err`).
-  - **High-Performance Records**: `@dataclass(slots=True, frozen=True)` for millions of in-memory chunk objects.
+  - **High-Performance Records**: `@dataclass(slots=True, frozen=True)` for millions of in-memory chunk objects and telemetry spans.
   - **Generators & Batching**: Memory-efficient lazy iterators and batching pipelines with `itertools`.
   - **Async & Concurrency**: `asyncio` TaskGroups, semaphores, bounded worker pools, and streaming responses.
   - **Production Traps**: 12 costly production traps (GIL misunderstandings, async caching, mutable defaults, float money).
@@ -127,7 +131,7 @@ The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** in
 | `/agents/patterns` | **Agent Patterns** | 12 code patterns with implementation problems and topology diagrams |
 | `/operations` | **Operations** | Telemetry spine, SLO tables, eval gates, and blast radius mitigation |
 | `/stack` | **Tech Stack** | Model APIs, tokens, prompt strategies, vector DBs, open models, MCP |
-| `/python` | **Python Snippets** | 30 production code recipes covering concurrency, async, and memory |
+| `/python` | **Python Snippets** | 37 production code recipes covering fundamentals, OOP, memory, async, and concurrency |
 | `/ml` | **Classical ML** | ML algorithms, metrics, feature stores, and drift detection |
 | `/training` | **Model Training** | Tokenizers, transformer loop, and the interactive dual-series loss chart |
 | `/glossary` | **Glossary** | 138+ AI engineering terms filterable by volume and domain |
@@ -136,7 +140,7 @@ The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** in
 
 ## 📐 Hand-Authored Architecture Diagrams
 
-No bulky diagramming libraries are loaded. The application contains **12 bespoke inline SVG diagrams**, drawn with responsive `viewBox` coordinates, themed with `currentColor`, and wrapped in mobile-friendly scrolling rails:
+No bulky diagramming libraries are loaded. The application contains **13 bespoke inline SVG diagrams**, drawn with responsive `viewBox` coordinates, themed with `currentColor`, and wrapped in mobile-friendly scrolling rails:
 
 | Figure | Route | Architectural Claim |
 | :--- | :--- | :--- |
@@ -152,6 +156,7 @@ No bulky diagramming libraries are loaded. The application contains **12 bespoke
 | **Loss Curves** | `/training` | Visual diagnostic of healthy, overfitting, and diverging training runs |
 | **Telemetry Spine** | `/operations` | One unified distributed trace record feeding monitoring, billing, and evals |
 | **Blast Radius** | `/operations` | Error costs: read operations trigger a retry; write tools require compensating rollbacks |
+| **Deploy Pipeline** | `/operations` | The automated evaluation gate is the stage most deployment pipelines are missing |
 
 ---
 
@@ -175,6 +180,18 @@ Rather than a generic uniform dark mode, each section adopts a contextual visual
 
 ---
 
+## 📱 Mobile-First Responsive Engineering
+
+The entire application is engineered for fluid responsiveness across phones, foldables, tablets, and desktops (320px to 1920px+):
+
+- **Scrollable Off-Canvas Drawer**: Mobile navigation features dynamic height constraints (`max-height: calc(100dvh - var(--bar-h))`) with hardware-accelerated momentum scrolling (`-webkit-overflow-scrolling: touch`) and WCAG-compliant tap targets (`min-height: 44px`).
+- **Fluid Typography Clamps**: All mastheads, kickers, and step headers utilize CSS `clamp()` and word-break rules to prevent horizontal text overflow on narrow 320px–375px screens.
+- **Adaptive Grid Systems**: Project entries, agent run sheets, level cards, checklists, and question grids collapse into structured single-column formats under 620px viewports.
+- **Isolated Scroll Rails**: Complex multi-column data tables, SVG system architecture figures, and code blocks scroll inside their own containers without causing horizontal page wobble.
+- **Touch-Friendly Controls**: Search bars automatically expand to full width on mobile, and filter chips provide clean tap states.
+
+---
+
 ## 📁 Repository Structure
 
 ```
@@ -182,7 +199,7 @@ Rather than a generic uniform dark mode, each section adopts a contextual visual
 ├── src/
 │   ├── app/                # Next.js App Router (75 pre-rendered pages)
 │   │   ├── layout.tsx      # Root shell, font declarations, theme scripts
-│   │   ├── globals.css     # Global CSS design tokens and base styles
+│   │   ├── globals.css     # Global CSS design tokens and responsive base styles
 │   │   ├── page.tsx        # Overview & volume map
 │   │   ├── catalog/        # RAG catalog search & filter
 │   │   ├── projects/[slug]/# 30 individual RAG project pages
@@ -190,7 +207,7 @@ Rather than a generic uniform dark mode, each section adopts a contextual visual
 │   │   ├── agents/         # Volume II catalog, slug specs, playbook, patterns
 │   │   ├── operations/     # Telemetry, SLOs, eval gates, blast radius
 │   │   ├── stack/          # LLM APIs, vector DBs, prompt engineering, MCP
-│   │   ├── python/         # 30 worked Python snippets & concurrency
+│   │   ├── python/         # 37 worked Python snippets & concurrency
 │   │   ├── ml/             # Classical ML, drift detection, feature stores
 │   │   ├── training/       # Transformer training loop & loss curve visualizer
 │   │   └── glossary/       # 138+ term searchable engineering dictionary
@@ -198,10 +215,10 @@ Rather than a generic uniform dark mode, each section adopts a contextual visual
 │   │   ├── CatalogBrowser  # Interactive client-side multi-tag filter
 │   │   ├── CodeBlock       # Custom safe-tokenizing code viewer
 │   │   ├── SectionScope    # Section theme synchronizer
-│   │   ├── SiteHeader      # Responsive header with section nav & theme toggle
-│   │   ├── SiteFooter      # Universal site footer
+│   │   ├── SiteHeader      # Responsive header with section nav & mobile drawer
+│   │   ├── SiteFooter      # Universal responsive footer
 │   │   ├── TierMeter       # Difficulty rating visualizer
-│   │   └── figures/        # Hand-authored inline SVG architectural diagrams
+│   │   └── figures/        # 13 hand-authored inline SVG architectural diagrams
 │   ├── data/               # Single-source-of-truth TypeScript datasets
 │   │   ├── projects.ts     # 30 complete RAG project specifications
 │   │   ├── agents.ts       # 30 complete autonomous agent specifications
@@ -209,7 +226,7 @@ Rather than a generic uniform dark mode, each section adopts a contextual visual
 │   │   ├── playbook.ts     # Ingest, chunking, retrieval, and eval tables
 │   │   ├── operations.ts   # Observability and reliability metrics
 │   │   ├── stack.ts        # Vector DB comparison, token costs, MCP spec
-│   │   ├── python.ts       # 30 high-throughput Python snippets
+│   │   ├── python.ts       # 37 high-throughput Python snippets and language fundamentals
 │   │   ├── ml.ts           # Classical algorithms, drift tests, MLOps
 │   │   ├── training.ts     # Tokenizer, training loop, loss curve data points
 │   │   └── glossary.ts     # 138+ curated technical entries
@@ -284,6 +301,7 @@ All domain knowledge is cleanly decoupled into strongly typed TypeScript data fi
 2. **Zero Runtime Bloat**: No UI kit dependencies (no Radix, no Tailwind, no Framer Motion, no Lucide, no Chart.js). Lightning-fast load times and sub-millisecond route transitions.
 3. **Data-Centric Design**: Adding new domain content requires zero modifications to rendering components.
 4. **Accessible & High-Contrast**: Every color combination and chart data series satisfies WCAG AA contrast standards across both light and dark operating modes.
+5. **Mobile First & Resilient**: Clean viewport scaling from small 320px phone screens up to 4K displays with zero layout breakage.
 
 ---
 
