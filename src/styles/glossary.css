@@ -1,0 +1,262 @@
+/* ============================================================
+   Glossary — deliberately neutral.
+   This section belongs to no volume, so it has no accent of its
+   own: the colour on each entry is the colour of the volume the
+   term lives in. Mono headwords, serif definitions.
+   ============================================================ */
+
+:root[data-section="glossary"] {
+  --paper: #e8e8e6;
+  --surface: #f9f9f8;
+  --surface-2: #f0f0ee;
+  --ink: #16181a;
+  --ink-2: #3d4145;
+  --muted: #6d7175;
+  --line: #c9c9c6;
+  --line-soft: #dcdcd9;
+  --accent: #33373a;
+  --accent-ink: #16181a;
+  --sel: #d9d9d4;
+
+  --dom-rag: #1d6b54;
+  --dom-agents: #a8410f;
+  --dom-models: #33409b;
+  --dom-training: #8a6414;
+  --dom-ops: #2f5566;
+  --dom-code: #7b3b5e;
+
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="glossary"]:not([data-theme="light"]) {
+    --paper: #121314;
+    --surface: #191a1c;
+    --surface-2: #1e1f21;
+    --ink: #e8e9ea;
+    --ink-2: #c2c5c8;
+    --muted: #85898d;
+    --line: #2b2d2f;
+    --line-soft: #222325;
+    --accent: #c9ccd0;
+    --accent-ink: #e8e9ea;
+    --sel: #2c3034;
+
+    --dom-rag: #74c7a2;
+    --dom-agents: #ef8a4c;
+    --dom-models: #8fa0f0;
+    --dom-training: #d9a94f;
+    --dom-ops: #7fb2c8;
+    --dom-code: #d993b4;
+  }
+}
+
+:root[data-theme="dark"][data-section="glossary"] {
+  --paper: #121314;
+  --surface: #191a1c;
+  --surface-2: #1e1f21;
+  --ink: #e8e9ea;
+  --ink-2: #c2c5c8;
+  --muted: #85898d;
+  --line: #2b2d2f;
+  --line-soft: #222325;
+  --accent: #c9ccd0;
+  --accent-ink: #e8e9ea;
+  --sel: #2c3034;
+
+  --dom-rag: #74c7a2;
+  --dom-agents: #ef8a4c;
+  --dom-models: #8fa0f0;
+  --dom-training: #d9a94f;
+  --dom-ops: #7fb2c8;
+  --dom-code: #d993b4;
+}
+
+/* per-domain colour, applied by class */
+.dom-rag {
+  --dom: var(--dom-rag);
+}
+.dom-agents {
+  --dom: var(--dom-agents);
+}
+.dom-models {
+  --dom: var(--dom-models);
+}
+.dom-training {
+  --dom: var(--dom-training);
+}
+.dom-ops {
+  --dom: var(--dom-ops);
+}
+.dom-code {
+  --dom: var(--dom-code);
+}
+
+/* filter chips carry their volume's colour when selected */
+[data-section="glossary"] .chip-rag[aria-pressed="true"] {
+  background: var(--dom-rag);
+  border-color: var(--dom-rag);
+  color: var(--paper);
+}
+[data-section="glossary"] .chip-agents[aria-pressed="true"] {
+  background: var(--dom-agents);
+  border-color: var(--dom-agents);
+  color: var(--paper);
+}
+[data-section="glossary"] .chip-models[aria-pressed="true"] {
+  background: var(--dom-models);
+  border-color: var(--dom-models);
+  color: var(--paper);
+}
+[data-section="glossary"] .chip-training[aria-pressed="true"] {
+  background: var(--dom-training);
+  border-color: var(--dom-training);
+  color: var(--paper);
+}
+[data-section="glossary"] .chip-ops[aria-pressed="true"] {
+  background: var(--dom-ops);
+  border-color: var(--dom-ops);
+  color: var(--paper);
+}
+[data-section="glossary"] .chip-code[aria-pressed="true"] {
+  background: var(--dom-code);
+  border-color: var(--dom-code);
+  color: var(--paper);
+}
+
+/* ---------------------------- groups ---------------------------- */
+
+.gloss-group {
+  margin-top: 40px;
+  scroll-margin-top: calc(var(--bar-h) + 16px);
+}
+.gloss-head {
+  border-top: 2px solid var(--dom, var(--line));
+  padding-top: 12px;
+  margin-bottom: 4px;
+}
+.gloss-head h2 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dom, var(--ink));
+}
+.gloss-head p {
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 68ch;
+  margin-top: 6px;
+}
+
+/* ---------------------------- entries ---------------------------- */
+
+.gloss {
+  margin: 0;
+}
+.entry-term {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line-soft);
+  scroll-margin-top: calc(var(--bar-h) + 16px);
+}
+.entry-term:first-child {
+  border-top: 1px solid var(--line-soft);
+}
+.entry-term dt {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.45;
+  position: relative;
+  padding-left: 14px;
+}
+.entry-term dt::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 4px;
+  height: 4px;
+  background: var(--dom, var(--muted));
+  border-radius: 50%;
+}
+.entry-term dd {
+  margin: 0;
+}
+.entry-term .def {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 70ch;
+}
+.entry-term .so-what {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 72ch;
+  margin-top: 7px;
+  padding-left: 12px;
+  border-left: 2px solid var(--dom, var(--line));
+}
+
+.entry-term .eg {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 74ch;
+  margin-top: 10px;
+  padding: 9px 12px;
+  background: var(--surface-2);
+  border-left: 2px solid var(--dom, var(--line));
+}
+.entry-term .eg-tag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dom, var(--muted));
+  margin-right: 9px;
+  white-space: nowrap;
+}
+
+/* ---------------------------- jump rail ---------------------------- */
+
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0 2px;
+}
+.jump a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--dom, var(--muted));
+  border: 1px solid var(--line);
+  padding: 7px 11px;
+}
+.jump a:hover {
+  border-color: var(--dom, var(--ink));
+}
+
+@media (max-width: 760px) {
+  .entry-term {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px 0;
+  }
+  .entry-term dt {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,410 @@
+/* ============================================================
+   Agents track — an operations-console identity.
+   Steel ground, burnt signal orange, Chivo + JetBrains Mono.
+   Scoped to [data-section="agents"] so the whole chrome —
+   header, footer, buttons — switches with the section.
+   ============================================================ */
+
+:root[data-section="agents"] {
+  --paper: #e3e6e9;
+  --surface: #f6f8f9;
+  --surface-2: #ebeef0;
+  --ink: #101720;
+  --ink-2: #333f4b;
+  --muted: #64717e;
+  --line: #bec7ce;
+  --line-soft: #d5dce1;
+  --accent: #a8410f;
+  --accent-ink: #86330b;
+  --amber: #a8410f;
+  --rust: #7e2b33;
+  --sel: #f2d7c4;
+
+  --lvl-1: #2f6c8c;
+  --lvl-2: #a8410f;
+  --lvl-3: #7e2b33;
+
+  --code-bg: #eef1f3;
+  --tk-com: #79848d;
+  --tk-str: #2f6b53;
+  --tk-kw: #a8410f;
+  --tk-num: #7e2b33;
+  --tk-dec: #2f6c8c;
+  --tk-bi: #3d4a54;
+
+  --font-sans: var(--font-chivo), "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-chivo), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="agents"]:not([data-theme="light"]) {
+    --paper: #0d1116;
+    --surface: #141a21;
+    --surface-2: #171e26;
+    --ink: #e3e9ee;
+    --ink-2: #bac5ce;
+    --muted: #7f8b96;
+    --line: #262f38;
+    --line-soft: #1e262e;
+    --accent: #ef8a4c;
+    --accent-ink: #ffa96f;
+    --amber: #ef8a4c;
+    --rust: #e0808a;
+    --sel: #38241a;
+
+    --lvl-1: #6faecd;
+    --lvl-2: #ef8a4c;
+    --lvl-3: #e0808a;
+
+    --code-bg: #10161c;
+    --tk-com: #7b8892;
+    --tk-str: #8fc4a5;
+    --tk-kw: #ef8a4c;
+    --tk-num: #e0a07a;
+    --tk-dec: #6faecd;
+    --tk-bi: #a3b3bf;
+  }
+}
+
+:root[data-theme="dark"][data-section="agents"] {
+  --paper: #0d1116;
+  --surface: #141a21;
+  --surface-2: #171e26;
+  --ink: #e3e9ee;
+  --ink-2: #bac5ce;
+  --muted: #7f8b96;
+  --line: #262f38;
+  --line-soft: #1e262e;
+  --accent: #ef8a4c;
+  --accent-ink: #ffa96f;
+  --amber: #ef8a4c;
+  --rust: #e0808a;
+  --sel: #38241a;
+
+  --lvl-1: #6faecd;
+  --lvl-2: #ef8a4c;
+  --lvl-3: #e0808a;
+
+  --code-bg: #10161c;
+  --tk-com: #7b8892;
+  --tk-str: #8fc4a5;
+  --tk-kw: #ef8a4c;
+  --tk-num: #e0a07a;
+  --tk-dec: #6faecd;
+  --tk-bi: #a3b3bf;
+}
+
+/* The console voice: squarer corners, tighter mono, harder rules. */
+[data-section="agents"] .btn,
+[data-section="agents"] .chip,
+[data-section="agents"] .search,
+[data-section="agents"] .icon-btn,
+[data-section="agents"] .tags li,
+[data-section="agents"] .toc a {
+  border-radius: 0;
+}
+
+[data-section="agents"] .masthead h1,
+[data-section="agents"] .sec-head h2 {
+  letter-spacing: -0.03em;
+}
+
+[data-section="agents"] .lede {
+  font-size: clamp(15.5px, 2.1vw, 17px);
+  line-height: 1.6;
+}
+
+[data-section="agents"] .prose {
+  font-size: 15.5px;
+  line-height: 1.68;
+  max-width: 68ch;
+}
+
+/* ---------------------------- autonomy pill ---------------------------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 8px;
+  border: 1px solid var(--pill-color, var(--accent));
+  color: var(--pill-color, var(--accent));
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pill .steps {
+  display: inline-flex;
+  gap: 2px;
+}
+.pill .steps i {
+  width: 4px;
+  height: 10px;
+  background: currentColor;
+  opacity: 0.25;
+}
+.pill .steps i.on {
+  opacity: 1;
+}
+.lv1 {
+  --pill-color: var(--lvl-1);
+}
+.lv2 {
+  --pill-color: var(--lvl-2);
+}
+.lv3 {
+  --pill-color: var(--lvl-3);
+}
+
+.autonomy-line {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------------------------- run sheet entry ---------------------------- */
+
+.runs {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.run {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--pill-color, var(--accent));
+  background: var(--surface);
+}
+
+.run-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+.run-head .id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.run-head .domain {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-left: auto;
+}
+
+.run-body {
+  padding: 18px 18px 20px;
+}
+.run-body h3 {
+  font-size: clamp(17px, 2.5vw, 19px);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.run-body h3 a:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.run-body .objective {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin-top: 8px;
+  max-width: 78ch;
+}
+
+.run-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 30px;
+  margin-top: 20px;
+}
+
+.aspec h4 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 9px;
+}
+.aspec.danger h4 {
+  color: var(--rust);
+  border-bottom-color: var(--rust);
+}
+.aspec li {
+  position: relative;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  padding-left: 14px;
+  margin-bottom: 7px;
+}
+.aspec li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 1px;
+  background: var(--accent);
+}
+.aspec.danger li::before {
+  background: var(--rust);
+}
+
+.run-ship {
+  margin-top: 18px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.run-ship b {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 10px;
+}
+
+/* ---------------------------- level cards ---------------------------- */
+
+.lvl-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.lvl-card {
+  background: var(--paper);
+  padding: 22px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lvl-card h3 {
+  font-size: 17px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+.lvl-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.lvl-card .foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ---------------------------- detail page ---------------------------- */
+
+.agent-head {
+  border-bottom: 1px solid var(--line);
+  padding: 28px 0 32px;
+}
+.agent-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 20px 0 14px;
+}
+.agent-head h1 {
+  font-size: clamp(26px, 5.2vw, 42px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  max-width: 22ch;
+}
+
+.block {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.block h2 {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.block.danger h2 {
+  color: var(--rust);
+}
+.block li {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  padding-left: 18px;
+  margin-bottom: 11px;
+}
+.block li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 8px;
+  height: 1px;
+  background: var(--accent);
+}
+.block.danger li::before {
+  background: var(--rust);
+}
+
+.block-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 26px 34px;
+}
+
+@media (max-width: 760px) {
+  .run-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .run-head {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .run-head .domain {
+    margin-left: 0;
+    width: 100%;
+  }
+  .run-body {
+    padding: 16px 14px 18px;
+  }
+}

@@ -1,0 +1,199 @@
+/* ============================================================
+   Training — a workshop identity.
+   Warm charcoal and brass, plots and manifests. Archivo
+   headings, Source Serif prose, JetBrains Mono for numbers.
+   The two series colours are validated for colour-vision
+   deficiency against this section's chart surface.
+   ============================================================ */
+
+:root[data-section="training"] {
+  --paper: #eae7e0;
+  --surface: #f7f4ee;
+  --surface-2: #efebe3;
+  --ink: #191712;
+  --ink-2: #423d33;
+  --muted: #746e62;
+  --line: #ccc6b9;
+  --line-soft: #ded9cf;
+  --accent: #8a6414;
+  --accent-ink: #6f5010;
+  --amber: #8a6414;
+  --rust: #8f3a2a;
+  --sel: #e8dcc0;
+
+  --series-train: #b07714;
+  --series-val: #1f5fa8;
+
+  --code-bg: #f4f0e8;
+  --tk-com: #857e70;
+  --tk-str: #4a6b3f;
+  --tk-kw: #8a6414;
+  --tk-num: #8f3a2a;
+  --tk-dec: #2f5f70;
+  --tk-bi: #4a4a58;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="training"]:not([data-theme="light"]) {
+    --paper: #16130e;
+    --surface: #1d1913;
+    --surface-2: #221e17;
+    --ink: #ece7dd;
+    --ink-2: #c6bfb2;
+    --muted: #8b8477;
+    --line: #322d24;
+    --line-soft: #26221b;
+    --accent: #d9a94f;
+    --accent-ink: #e9bd6a;
+    --amber: #d9a94f;
+    --rust: #e08b74;
+    --sel: #3a2f18;
+
+    --series-train: #b58221;
+    --series-val: #4593d2;
+
+    --code-bg: #1a1710;
+    --tk-com: #837c6f;
+    --tk-str: #9cc08b;
+    --tk-kw: #d9a94f;
+    --tk-num: #e08b74;
+    --tk-dec: #7fb6c7;
+    --tk-bi: #aab0c0;
+  }
+}
+
+:root[data-theme="dark"][data-section="training"] {
+  --paper: #16130e;
+  --surface: #1d1913;
+  --surface-2: #221e17;
+  --ink: #ece7dd;
+  --ink-2: #c6bfb2;
+  --muted: #8b8477;
+  --line: #322d24;
+  --line-soft: #26221b;
+  --accent: #d9a94f;
+  --accent-ink: #e9bd6a;
+  --amber: #d9a94f;
+  --rust: #e08b74;
+  --sel: #3a2f18;
+
+  --series-train: #b58221;
+  --series-val: #4593d2;
+
+  --code-bg: #1a1710;
+  --tk-com: #837c6f;
+  --tk-str: #9cc08b;
+  --tk-kw: #d9a94f;
+  --tk-num: #e08b74;
+  --tk-dec: #7fb6c7;
+  --tk-bi: #aab0c0;
+}
+
+/* ---------------------------- chart ---------------------------- */
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.chart-legend i {
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+}
+
+figure svg.chart {
+  min-width: 640px;
+  max-width: 900px;
+}
+.chart-tick {
+  opacity: 0.65;
+}
+
+.chart-data {
+  margin-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 10px;
+}
+.chart-data summary {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+.chart-data summary:hover {
+  color: var(--ink);
+}
+.chart-data table {
+  min-width: 340px;
+}
+
+/* ---------------------------- stage rail ---------------------------- */
+
+.stages {
+  counter-reset: stage;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  max-width: 82ch;
+}
+.stages li {
+  counter-increment: stage;
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  padding: 13px 0 13px 46px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.stages li::before {
+  content: counter(stage, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.spec-note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  margin: 20px 0;
+  overflow-x: auto;
+  max-width: 76ch;
+}
+.spec-note b {
+  color: var(--accent);
+  font-weight: 500;
+}

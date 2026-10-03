@@ -1,0 +1,188 @@
+/* ============================================================
+   Stack — a blueprint identity.
+   Cool blue-grey ground, ultramarine accent, thin rules and
+   annotated parts: Chivo headings, Source Serif prose,
+   JetBrains Mono for labels and code.
+   ============================================================ */
+
+:root[data-section="stack"] {
+  --paper: #e4e7ec;
+  --surface: #f7f9fb;
+  --surface-2: #edf0f4;
+  --ink: #14161f;
+  --ink-2: #3a4052;
+  --muted: #6a7186;
+  --line: #c2c8d4;
+  --line-soft: #d8dde6;
+  --accent: #33409b;
+  --accent-ink: #262f78;
+  --amber: #8a6414;
+  --rust: #8f3244;
+  --sel: #ccd3f0;
+
+  --rag: #1d6b54;
+  --agt: #a8410f;
+
+  --code-bg: #f3f5f9;
+  --tk-com: #7b8296;
+  --tk-str: #2f6b53;
+  --tk-kw: #33409b;
+  --tk-num: #8a5a14;
+  --tk-dec: #2c6479;
+  --tk-bi: #414a63;
+
+  --font-sans: var(--font-chivo), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="stack"]:not([data-theme="light"]) {
+    --paper: #0e1018;
+    --surface: #161a24;
+    --surface-2: #1b1f2b;
+    --ink: #e6e9f2;
+    --ink-2: #c0c6d6;
+    --muted: #838aa0;
+    --line: #282e3c;
+    --line-soft: #1f2431;
+    --accent: #8fa0f0;
+    --accent-ink: #a9b6f7;
+    --amber: #d6b072;
+    --rust: #e0808f;
+    --sel: #232a4a;
+
+    --rag: #74c7a2;
+    --agt: #ef8a4c;
+
+    --code-bg: #141824;
+    --tk-com: #79809a;
+    --tk-str: #8fc4a5;
+    --tk-kw: #8fa0f0;
+    --tk-num: #d6b072;
+    --tk-dec: #7fc0d0;
+    --tk-bi: #aab4cc;
+  }
+}
+
+:root[data-theme="dark"][data-section="stack"] {
+  --paper: #0e1018;
+  --surface: #161a24;
+  --surface-2: #1b1f2b;
+  --ink: #e6e9f2;
+  --ink-2: #c0c6d6;
+  --muted: #838aa0;
+  --line: #282e3c;
+  --line-soft: #1f2431;
+  --accent: #8fa0f0;
+  --accent-ink: #a9b6f7;
+  --amber: #d6b072;
+  --rust: #e0808f;
+  --sel: #232a4a;
+
+  --rag: #74c7a2;
+  --agt: #ef8a4c;
+
+  --code-bg: #141824;
+  --tk-com: #79809a;
+  --tk-str: #8fc4a5;
+  --tk-kw: #8fa0f0;
+  --tk-num: #d6b072;
+  --tk-dec: #7fc0d0;
+  --tk-bi: #aab4cc;
+}
+
+[data-section="stack"] .btn,
+[data-section="stack"] .chip,
+[data-section="stack"] .code,
+[data-section="stack"] .tags li {
+  border-radius: 0;
+}
+
+/* ---------------------------- parts list ---------------------------- */
+
+.parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 8px;
+}
+.part {
+  background: var(--paper);
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.part .n {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+.part h3 {
+  font-size: 15.5px;
+  font-weight: 600;
+}
+.part p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* ---------------------------- rules list ---------------------------- */
+
+.rules {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  max-width: 82ch;
+}
+.rules li {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  padding: 11px 0 11px 30px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.rules li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 19px;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
+}
+
+/* ---------------------------- ordered build steps ---------------------------- */
+
+.steps {
+  counter-reset: step;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  max-width: 82ch;
+}
+.steps li {
+  counter-increment: step;
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  padding: 13px 0 13px 44px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+}

@@ -1,0 +1,272 @@
+/* ============================================================
+   Operations — the layer both volumes share.
+   Neutral graphite ground, an instrument-slate accent, and the
+   two volume colours kept live so every split table reads at a
+   glance: pine = retrieval, orange = agents.
+   ============================================================ */
+
+:root[data-section="ops"] {
+  --paper: #e6e7e8;
+  --surface: #f8f9f9;
+  --surface-2: #eeeff0;
+  --ink: #15181a;
+  --ink-2: #3a4043;
+  --muted: #6b7275;
+  --line: #c4c7c9;
+  --line-soft: #d9dbdc;
+  --accent: #2f5566;
+  --accent-ink: #23414f;
+  --amber: #8a6412;
+  --rust: #93312a;
+  --sel: #cfdde3;
+
+  --rag: #1d6b54;
+  --agt: #a8410f;
+  --ok: #2e6b3f;
+  --warn: #8a6412;
+  --crit: #93312a;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="ops"]:not([data-theme="light"]) {
+    --paper: #101213;
+    --surface: #171a1c;
+    --surface-2: #1c1f21;
+    --ink: #e6e9ea;
+    --ink-2: #c0c6c8;
+    --muted: #848c8f;
+    --line: #2a2f31;
+    --line-soft: #212527;
+    --accent: #7fb2c8;
+    --accent-ink: #9cc9dc;
+    --amber: #d7a93f;
+    --rust: #e08079;
+    --sel: #1e3540;
+
+    --rag: #74c7a2;
+    --agt: #ef8a4c;
+    --ok: #6fbe86;
+    --warn: #d7a93f;
+    --crit: #e08079;
+  }
+}
+
+:root[data-theme="dark"][data-section="ops"] {
+  --paper: #101213;
+  --surface: #171a1c;
+  --surface-2: #1c1f21;
+  --ink: #e6e9ea;
+  --ink-2: #c0c6c8;
+  --muted: #848c8f;
+  --line: #2a2f31;
+  --line-soft: #212527;
+  --accent: #7fb2c8;
+  --accent-ink: #9cc9dc;
+  --amber: #d7a93f;
+  --rust: #e08079;
+  --sel: #1e3540;
+
+  --rag: #74c7a2;
+  --agt: #ef8a4c;
+  --ok: #6fbe86;
+  --warn: #d7a93f;
+  --crit: #e08079;
+}
+
+/* Column identity: the same two colours in every table and figure. */
+[data-section="ops"] th.col-rag {
+  color: var(--rag);
+  border-bottom-color: var(--rag);
+}
+[data-section="ops"] th.col-agt {
+  color: var(--agt);
+  border-bottom-color: var(--agt);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  padding: 12px 0 14px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 4px 0 8px;
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.legend i {
+  width: 14px;
+  height: 3px;
+  background: currentColor;
+}
+.legend .k-rag {
+  color: var(--rag);
+}
+.legend .k-agt {
+  color: var(--agt);
+}
+
+/* ---------------------------- question cards ---------------------------- */
+
+.q-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.q-card {
+  background: var(--paper);
+  padding: 20px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.q-card .q {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.q-card h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.q-card p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.q-card .metric {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------------------------- dashboard strip ---------------------------- */
+
+.dash {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.dash:first-of-type {
+  border-top: 1px solid var(--line);
+}
+.dash h3 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dash p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 66ch;
+}
+
+/* ---------------------------- checklist ---------------------------- */
+
+.check {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 34px;
+  margin-top: 18px;
+}
+.check li {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  padding: 10px 0 10px 30px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.check li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--accent);
+}
+.check li::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 18px;
+  width: 6px;
+  height: 3px;
+  border-left: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(-45deg);
+  opacity: 0.55;
+}
+
+/* ---------------------------- formula block ---------------------------- */
+
+.formula {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  padding: 16px 18px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+.formula h4 {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.formula code {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre;
+  color: var(--ink);
+}
+.formula .note {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.6;
+  white-space: normal;
+}
+
+@media (max-width: 760px) {
+  .dash {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

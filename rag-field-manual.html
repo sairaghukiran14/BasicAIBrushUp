@@ -1,0 +1,920 @@
+<title>RAG Field Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --paper:#E8EBE6;
+  --surface:#FAFBF8;
+  --surface-2:#F1F3EE;
+  --ink:#141A17;
+  --ink-2:#3B453F;
+  --muted:#6C766F;
+  --line:#C8CFC6;
+  --line-soft:#DBE0D7;
+  --accent:#1D6B54;
+  --accent-ink:#12503F;
+  --amber:#A0611A;
+  --rust:#94382A;
+  --shadow:rgba(20,26,23,.08);
+  --sel:#CFE0D6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1310;
+    --surface:#161B17;
+    --surface-2:#1B211C;
+    --ink:#E7ECE5;
+    --ink-2:#C3CCC1;
+    --muted:#8D978C;
+    --line:#2C332C;
+    --line-soft:#232A24;
+    --accent:#74C7A2;
+    --accent-ink:#9BDCBD;
+    --amber:#D6A05C;
+    --rust:#E08C79;
+    --shadow:rgba(0,0,0,.4);
+    --sel:#23392E;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1310;
+  --surface:#161B17;
+  --surface-2:#1B211C;
+  --ink:#E7ECE5;
+  --ink-2:#C3CCC1;
+  --muted:#8D978C;
+  --line:#2C332C;
+  --line-soft:#232A24;
+  --accent:#74C7A2;
+  --accent-ink:#9BDCBD;
+  --amber:#D6A05C;
+  --rust:#E08C79;
+  --shadow:rgba(0,0,0,.4);
+  --sel:#23392E;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--sel)}
+a{color:inherit}
+h1,h2,h3,h4{margin:0;text-wrap:balance;letter-spacing:-.015em}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--line);padding:56px 0 30px}
+.mast-kicker{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:18px;
+}
+.masthead h1{font-size:clamp(38px,6.2vw,68px);font-weight:700;line-height:.98;max-width:16ch}
+.mast-sub{
+  font-family:"Source Serif 4",Georgia,serif;font-size:17px;line-height:1.6;
+  color:var(--ink-2);max-width:62ch;margin-top:20px;
+}
+.mast-stats{
+  display:flex;flex-wrap:wrap;gap:0;margin-top:34px;
+  border-top:1px solid var(--line-soft);
+}
+.stat{
+  flex:1 1 150px;padding:14px 20px 4px 0;border-right:1px solid var(--line-soft);
+  margin-right:20px;
+}
+.stat:last-child{border-right:0}
+.stat b{
+  display:block;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;line-height:1.1;
+}
+.stat span{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* ---------- sticky nav ---------- */
+nav.bar{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--line);
+}
+.bar-in{display:flex;align-items:center;gap:26px;height:46px;overflow-x:auto}
+.bar a{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;white-space:nowrap;
+  padding:4px 0;border-bottom:2px solid transparent;
+}
+.bar a:hover,.bar a:focus-visible{color:var(--ink);border-bottom-color:var(--accent)}
+.bar .bar-mark{font-weight:600;color:var(--ink);letter-spacing:.14em;margin-right:auto}
+
+/* ---------- section frame ---------- */
+section{padding:56px 0}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.sec-num{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);
+  letter-spacing:.14em;
+}
+.sec-head h2{font-size:clamp(24px,3.4vw,34px);font-weight:600}
+.sec-lede{
+  font-family:"Source Serif 4",Georgia,serif;font-size:16.5px;color:var(--ink-2);
+  max-width:64ch;margin-bottom:36px;
+}
+
+/* ---------- filters ---------- */
+.filters{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:14px 0 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-bottom:8px;position:sticky;top:46px;background:var(--paper);z-index:15;
+}
+.chip{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:6px 13px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);cursor:pointer;border-radius:2px;
+}
+.chip:hover{color:var(--ink);border-color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#q{
+  flex:1 1 210px;min-width:170px;font-family:"IBM Plex Mono",monospace;font-size:12px;
+  padding:7px 11px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:2px;
+}
+#q::placeholder{color:var(--muted)}
+.count{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);
+  letter-spacing:.08em;white-space:nowrap;
+}
+
+/* ---------- catalog entry ---------- */
+.entry{
+  display:grid;grid-template-columns:186px 1fr;gap:34px;
+  padding:30px 0;border-bottom:1px solid var(--line-soft);
+}
+.entry:first-of-type{border-top:1px solid var(--line-soft)}
+.num{
+  font-family:"IBM Plex Mono",monospace;font-size:30px;font-weight:500;
+  color:var(--ink);opacity:.28;line-height:1;font-variant-numeric:tabular-nums;
+}
+.meter{display:flex;gap:3px;margin:12px 0 7px}
+.meter i{display:block;width:19px;height:5px;background:var(--line);border-radius:1px}
+.t1 .meter i:nth-child(-n+1){background:var(--accent)}
+.t2 .meter i:nth-child(-n+2){background:var(--amber)}
+.t3 .meter i:nth-child(-n+3){background:var(--rust)}
+.tier{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.t1 .tier{color:var(--accent)}
+.t2 .tier{color:var(--amber)}
+.t3 .tier{color:var(--rust)}
+.industry{
+  font-size:13.5px;font-weight:600;margin-top:14px;padding-top:12px;
+  border-top:1px solid var(--line-soft);color:var(--ink);
+}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+.tags li{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+  color:var(--muted);border:1px solid var(--line-soft);padding:2px 6px;border-radius:2px;
+}
+.entry h3{font-size:20px;font-weight:600;line-height:1.25}
+.use{
+  font-family:"Source Serif 4",Georgia,serif;font-size:16px;color:var(--ink-2);
+  margin-top:8px;max-width:70ch;
+}
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:22px}
+.spec h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);padding-bottom:6px;
+  border-bottom:1px solid var(--line);margin-bottom:9px;font-weight:500;
+}
+.spec li{
+  font-size:13.5px;line-height:1.5;color:var(--ink-2);padding-left:13px;
+  position:relative;margin-bottom:7px;
+}
+.spec li::before{
+  content:"";position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--accent);
+}
+.ship{
+  margin-top:20px;font-size:13.5px;color:var(--ink-2);
+  border-left:2px solid var(--accent);padding:2px 0 2px 12px;max-width:78ch;
+}
+.ship b{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);display:block;font-weight:500;
+}
+.empty{padding:40px 0;color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:12px}
+
+/* ---------- playbook ---------- */
+.playbook{border-top:1px solid var(--line);background:var(--surface-2)}
+.prose{font-family:"Source Serif 4",Georgia,serif;font-size:16.5px;line-height:1.65;color:var(--ink-2);max-width:66ch}
+.prose+.prose{margin-top:14px}
+.prose b,.prose strong{color:var(--ink);font-weight:600}
+h3.step{
+  font-size:19px;font-weight:600;margin:44px 0 10px;padding-top:14px;
+  border-top:1px solid var(--line);
+}
+h3.step .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);margin-right:10px;letter-spacing:.1em}
+h4.sub{font-size:14.5px;font-weight:600;margin:26px 0 8px}
+
+figure{margin:32px 0 8px;padding:0}
+figure svg{display:block;width:100%;height:auto;max-width:900px;color:var(--ink)}
+figcaption{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);
+  line-height:1.6;margin-top:12px;max-width:70ch;
+}
+.fig-scroll{overflow-x:auto}
+
+.tbl-wrap{overflow-x:auto;margin:20px 0}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);text-align:left;font-weight:500;
+  padding:0 14px 8px 0;border-bottom:1px solid var(--line);
+}
+td{padding:11px 14px 11px 0;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--ink-2)}
+td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
+td.num-cell,th.num-cell{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;padding-right:0}
+code{
+  font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface);
+  border:1px solid var(--line-soft);padding:1px 5px;border-radius:2px;color:var(--ink);
+}
+.callout{
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+  padding:16px 18px;margin:22px 0;max-width:74ch;
+}
+.callout p{font-size:14px;color:var(--ink-2)}
+.callout .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px;
+}
+.ladder{margin:22px 0;border-top:1px solid var(--line)}
+.rung{display:grid;grid-template-columns:44px 1fr 132px;gap:18px;padding:14px 0;border-bottom:1px solid var(--line-soft);align-items:baseline}
+.rung .r{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent)}
+.rung h5{margin:0;font-size:14.5px;font-weight:600}
+.rung p{font-size:13.5px;color:var(--ink-2);margin-top:3px;max-width:62ch}
+.rung .gain{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);text-align:right}
+.list{margin:14px 0;max-width:70ch}
+.list li{font-size:14.5px;color:var(--ink-2);padding-left:18px;position:relative;margin-bottom:9px}
+.list li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:1px;background:var(--accent)}
+.list li b{color:var(--ink);font-weight:600}
+
+footer{border-top:1px solid var(--line);padding:30px 0 60px}
+footer p{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);line-height:1.8}
+
+@media (max-width:860px){
+  .entry{grid-template-columns:1fr;gap:16px}
+  .specs{grid-template-columns:1fr;gap:18px}
+  .rung{grid-template-columns:34px 1fr;}
+  .rung .gain{grid-column:2;text-align:left}
+  .filters{position:static}
+  .wrap{padding:0 20px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="mast-kicker">30 build specs &nbsp;·&nbsp; 30 industries &nbsp;·&nbsp; one architecture</div>
+    <h1>RAG Field Manual</h1>
+    <p class="mast-sub">Thirty retrieval-augmented generation projects, ordered by how much of the machinery each one forces you to build — from a single-corpus policy bot to a permission-aware index of a hundred million chunks. Every entry states its requirements, its inputs, its outputs, and the number that says it is finished. The playbook at the end is the architecture all thirty share.</p>
+    <div class="mast-stats">
+      <div class="stat"><b>10</b><span>Easy — one corpus</span></div>
+      <div class="stat"><b>10</b><span>Medium — hybrid + rerank</span></div>
+      <div class="stat"><b>10</b><span>Advanced — agentic, graph, multimodal</span></div>
+      <div class="stat"><b>9</b><span>Playbook stages</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="bar">
+  <div class="wrap bar-in">
+    <span class="bar-mark mono">RAG&nbsp;/&nbsp;FM</span>
+    <a href="#catalog">Catalog</a>
+    <a href="#playbook">Playbook</a>
+    <a href="#budget">Latency budget</a>
+    <a href="#scale">Scale</a>
+    <a href="#eval">Evaluation</a>
+    <a href="#failures">Failure modes</a>
+    <a href="#path">Build path</a>
+  </div>
+</nav>
+
+<section id="catalog">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Project catalog</h2></div>
+    <p class="sec-lede">Difficulty is measured by mechanism, not by subject matter. An easy project needs one corpus and one retrieval pass. A medium project needs hybrid search, metadata filters, reranking, or a second data type. An advanced project needs several of: multi-hop planning, a knowledge graph, structured-plus-unstructured fusion, streaming ingestion, multimodality, per-user access control, or audit-grade traceability.</p>
+
+    <div class="filters">
+      <button class="chip" data-tier="all" aria-pressed="true">All 30</button>
+      <button class="chip" data-tier="1" aria-pressed="false">Easy</button>
+      <button class="chip" data-tier="2" aria-pressed="false">Medium</button>
+      <button class="chip" data-tier="3" aria-pressed="false">Advanced</button>
+      <input id="q" type="search" placeholder="filter by industry, technique, format…" aria-label="Filter projects">
+      <span class="count" id="count">30 shown</span>
+    </div>
+
+    <div id="entries"></div>
+    <div class="empty" id="empty" hidden>No project matches that filter.</div>
+  </div>
+</section>
+
+<section class="playbook" id="playbook">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>How a scalable RAG system actually works</h2></div>
+    <p class="sec-lede">A RAG system is two loops that meet at an index. One runs offline and turns documents into retrievable units. The other runs per request and turns a question into a grounded answer. Almost every production failure is a defect in one specific stage of one specific loop — so the useful mental model is the stage list, not the word "RAG".</p>
+
+    <figure class="fig-scroll">
+      <svg viewBox="0 0 900 380" role="img" aria-label="The ingestion loop writes chunks and vectors into a shared index; the serving loop reads from that index through rewrite, hybrid retrieval, rerank, context packing and generation, with a grounding check before the answer is returned.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1D6B54"/>
+          </marker>
+        </defs>
+
+        <text x="0" y="16" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor" opacity=".55" letter-spacing="1.4">OFFLINE — INGESTION LOOP (runs on document change)</text>
+
+        <g font-family="Archivo, sans-serif" font-size="12" fill="currentColor">
+          <rect x="0" y="32" width="118" height="46" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="59" y="52" text-anchor="middle">Sources</text>
+          <text x="59" y="68" text-anchor="middle" font-size="10" opacity=".6">PDF · HTML · DB · API</text>
+
+          <rect x="158" y="32" width="112" height="46" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="214" y="52" text-anchor="middle">Parse</text>
+          <text x="214" y="68" text-anchor="middle" font-size="10" opacity=".6">layout · tables · OCR</text>
+
+          <rect x="310" y="32" width="112" height="46" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="366" y="52" text-anchor="middle">Chunk</text>
+          <text x="366" y="68" text-anchor="middle" font-size="10" opacity=".6">300–500 tok + parent</text>
+
+          <rect x="462" y="32" width="112" height="46" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="518" y="52" text-anchor="middle">Enrich</text>
+          <text x="518" y="68" text-anchor="middle" font-size="10" opacity=".6">metadata · ACL · dates</text>
+
+          <rect x="614" y="32" width="112" height="46" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="670" y="52" text-anchor="middle">Embed</text>
+          <text x="670" y="68" text-anchor="middle" font-size="10" opacity=".6">batch · dedup by hash</text>
+        </g>
+
+        <g stroke="currentColor" stroke-width="1" marker-end="url(#ar)" fill="none">
+          <line x1="118" y1="55" x2="152" y2="55"/>
+          <line x1="270" y1="55" x2="304" y2="55"/>
+          <line x1="422" y1="55" x2="456" y2="55"/>
+          <line x1="574" y1="55" x2="608" y2="55"/>
+        </g>
+        <path d="M726 55 L790 55 L790 150" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#ar)"/>
+        <text x="798" y="105" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".7">upsert +</text>
+        <text x="798" y="118" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".7">tombstone</text>
+
+        <rect x="286" y="150" width="504" height="56" fill="none" stroke="#1D6B54" stroke-width="1.6"/>
+        <text x="538" y="174" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600" fill="#1D6B54">INDEX — vectors + inverted (BM25) + metadata filters</text>
+        <text x="538" y="192" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#1D6B54" opacity=".85">sharded · versioned · ACL tags stored beside every chunk</text>
+
+        <text x="0" y="248" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor" opacity=".55" letter-spacing="1.4">ONLINE — SERVING LOOP (runs per request, budget ≈ 2s p95)</text>
+
+        <g font-family="Archivo, sans-serif" font-size="12" fill="currentColor">
+          <rect x="0" y="264" width="104" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="52" y="284" text-anchor="middle">Question</text>
+          <text x="52" y="299" text-anchor="middle" font-size="10" opacity=".6">+ history</text>
+
+          <rect x="140" y="264" width="118" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="199" y="284" text-anchor="middle">Rewrite</text>
+          <text x="199" y="299" text-anchor="middle" font-size="10" opacity=".6">+ extract filters</text>
+
+          <rect x="294" y="264" width="118" height="44" fill="none" stroke="#1D6B54" stroke-width="1.4"/>
+          <text x="353" y="284" text-anchor="middle" fill="#1D6B54">Retrieve</text>
+          <text x="353" y="299" text-anchor="middle" font-size="10" fill="#1D6B54" opacity=".8">dense + BM25 → RRF</text>
+
+          <rect x="448" y="264" width="118" height="44" fill="none" stroke="#1D6B54" stroke-width="1.4"/>
+          <text x="507" y="284" text-anchor="middle" fill="#1D6B54">Rerank</text>
+          <text x="507" y="299" text-anchor="middle" font-size="10" fill="#1D6B54" opacity=".8">cross-encoder 100→8</text>
+
+          <rect x="602" y="264" width="112" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="658" y="284" text-anchor="middle">Generate</text>
+          <text x="658" y="299" text-anchor="middle" font-size="10" opacity=".6">cite or abstain</text>
+
+          <rect x="750" y="264" width="112" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="806" y="284" text-anchor="middle">Check</text>
+          <text x="806" y="299" text-anchor="middle" font-size="10" opacity=".6">grounding · policy</text>
+        </g>
+
+        <g stroke="currentColor" stroke-width="1" marker-end="url(#ar)" fill="none">
+          <line x1="104" y1="286" x2="134" y2="286"/>
+          <line x1="258" y1="286" x2="288" y2="286"/>
+          <line x1="412" y1="286" x2="442" y2="286"/>
+          <line x1="566" y1="286" x2="596" y2="286"/>
+          <line x1="714" y1="286" x2="744" y2="286"/>
+        </g>
+
+        <path d="M353 250 L353 212" stroke="#1D6B54" stroke-width="1.4" fill="none" marker-end="url(#ar-a)"/>
+        <text x="363" y="234" font-family="IBM Plex Mono, monospace" font-size="10" fill="#1D6B54">queries, ACL-pre-filtered</text>
+
+        <path d="M199 320 L199 344 L806 344 L806 320" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#ar)"/>
+        <text x="452" y="360" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".7">cache hit on rewritten query + filter set returns here and skips retrieval entirely</text>
+      </svg>
+      <figcaption>Fig. 1 — The two loops meet only at the index. Everything above the index is a batch job you can re-run; everything below it is on the user's clock. The dashed path is the cache: it short-circuits four stages, which is why cache design belongs in the architecture and not in a later optimisation ticket.</figcaption>
+    </figure>
+
+    <h3 class="step"><span class="n">STAGE 01</span>Parse before you chunk</h3>
+    <p class="prose">Retrieval quality is capped by extraction quality, and most teams discover this three weeks late. A PDF table flattened into a single line of space-separated numbers cannot be retrieved correctly no matter which embedding model you buy. Use a layout-aware parser, keep headings as a hierarchy you can attach to each chunk, serialise tables row-wise with the header repeated on every row, and run OCR only where you must — it is the slowest and least reliable step you own.</p>
+    <ul class="list">
+      <li><b>Keep structure:</b> heading path, page number, section id, effective date. These become metadata filters later and you cannot recover them after chunking.</li>
+      <li><b>Never split an atomic unit:</b> a code fence, a table, a clause, a numbered procedure step.</li>
+      <li><b>Hash every source unit</b> so re-ingestion can skip unchanged content — this is what makes incremental indexing possible at stage 8.</li>
+    </ul>
+
+    <h3 class="step"><span class="n">STAGE 02</span>Chunk for the question, not for the model</h3>
+    <p class="prose">The chunk is the unit of retrieval, so its size is a statement about what a single answer needs. 300–500 tokens with 10–15% overlap is a defensible default for prose. Better than tuning the number is <b>small-to-big</b>: embed a small precise chunk, but pass its parent section to the model. You get the precision of a tight embedding and the context of a whole section.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Content type</th><th>Chunking strategy</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Prose / policy</td><td>Recursive, 400 tok, 15% overlap, heading path prepended</td><td>Overlap saves answers that straddle a boundary</td></tr>
+          <tr><td>Legal contracts</td><td>Clause-level segmentation, one clause per chunk</td><td>The clause is the unit people actually argue about</td></tr>
+          <tr><td>API / code docs</td><td>Section-level, code fences kept whole</td><td>A half-snippet is worse than no snippet</td></tr>
+          <tr><td>Tables</td><td>Row-wise with headers repeated, plus a table summary chunk</td><td>Lets both "what is the fee" and "what does this table cover" hit</td></tr>
+          <tr><td>Transcripts</td><td>Speaker turns grouped to ~60s, timestamps preserved</td><td>Citation must be playable, not approximate</td></tr>
+          <tr><td>Tickets / logs</td><td>One event or ticket per chunk, templated fields</td><td>They are already atomic — do not merge them</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="step"><span class="n">STAGE 03</span>Embeddings: pick on your data, then freeze</h3>
+    <p class="prose">Leaderboard rank predicts almost nothing about your corpus. Take fifty real questions, label the passages that answer them, and measure recall@20 for three candidate models — that experiment takes an afternoon and settles the argument. 768–1024 dimensions is the practical sweet spot; larger vectors cost linearly in memory and buy little once a reranker is in the pipeline.</p>
+    <p class="prose">Treat the embedding model as part of the index's identity. Changing it invalidates every vector you have stored, so a model swap is a migration: build the new index alongside the old, dual-write, compare on the golden set, then cut over. Never mix two models' vectors in one index.</p>
+
+    <h3 class="step"><span class="n">STAGE 04</span>Retrieval: hybrid first, then rerank</h3>
+    <p class="prose">Pure dense retrieval fails on exactly the tokens your users care most about: part numbers, drug names, error codes, ticker symbols, statute references. BM25 nails those and fails at paraphrase; dense does the reverse. Run both and fuse with Reciprocal Rank Fusion — no score normalisation, no tuning, roughly <code>score = Σ 1/(60 + rank)</code>. Then rerank the fused top 50–100 with a cross-encoder. Hybrid plus rerank is the single highest-return upgrade in the whole pipeline and it is available on day one.</p>
+
+    <figure class="fig-scroll">
+      <svg viewBox="0 0 900 300" role="img" aria-label="A retrieval cascade narrowing from millions of chunks to eight passages in four stages, each cheaper per item than the next and each with its own latency cost.">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="Archivo, sans-serif" fill="currentColor">
+          <rect x="0" y="60" width="180" height="150" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="90" y="120" text-anchor="middle" font-size="13" font-weight="600">Corpus</text>
+          <text x="90" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16">10,000,000</text>
+          <text x="90" y="160" text-anchor="middle" font-size="10" opacity=".6">chunks</text>
+
+          <rect x="232" y="82" width="170" height="106" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="317" y="122" text-anchor="middle" font-size="13" font-weight="600">ANN + BM25</text>
+          <text x="317" y="144" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16">200</text>
+          <text x="317" y="162" text-anchor="middle" font-size="10" opacity=".6">100 per channel</text>
+
+          <rect x="454" y="100" width="160" height="70" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="534" y="128" text-anchor="middle" font-size="13" font-weight="600">RRF fusion</text>
+          <text x="534" y="150" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16">100</text>
+
+          <rect x="666" y="110" width="140" height="50" fill="none" stroke="#1D6B54" stroke-width="1.6"/>
+          <text x="736" y="132" text-anchor="middle" font-size="13" font-weight="600" fill="#1D6B54">Rerank</text>
+          <text x="736" y="152" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" fill="#1D6B54">8</text>
+        </g>
+        <g stroke="currentColor" stroke-width="1" marker-end="url(#ar2)" fill="none">
+          <line x1="180" y1="135" x2="226" y2="135"/>
+          <line x1="402" y1="135" x2="448" y2="135"/>
+          <line x1="614" y1="135" x2="660" y2="135"/>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".75" text-anchor="middle">
+          <text x="203" y="126">~40 ms</text>
+          <text x="425" y="126">~2 ms</text>
+          <text x="637" y="126">~120 ms</text>
+          <text x="203" y="228">graph walk,</text><text x="203" y="241">cheap per item</text>
+          <text x="425" y="228">rank-only fusion,</text><text x="425" y="241">no score tuning</text>
+          <text x="637" y="228">full attention,</text><text x="637" y="241">expensive per item</text>
+        </g>
+        <text x="850" y="196" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#1D6B54">into the prompt</text>
+        <line x1="0" y1="266" x2="900" y2="266" stroke="currentColor" stroke-width="1" opacity=".25"/>
+        <text x="0" y="286" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".7">Cost per item rises left to right; candidate count falls faster. That inversion is what makes the cascade affordable.</text>
+      </svg>
+      <figcaption>Fig. 2 — The cascade. Widening the first stage costs almost nothing and is how you fix recall; widening the last stage costs milliseconds per candidate and is how you blow the latency budget. When answers are wrong, raise the candidate count before you raise <code>k</code> into the prompt.</figcaption>
+    </figure>
+
+    <h4 class="sub">The retrieval quality ladder</h4>
+    <div class="ladder">
+      <div class="rung"><span class="r">R1</span><div><h5>Dense top-k</h5><p>One embedding, one index, <code>k=5</code>. The baseline you should never ship but must measure.</p></div><span class="gain">baseline</span></div>
+      <div class="rung"><span class="r">R2</span><div><h5>Hybrid + metadata filters</h5><p>BM25 alongside dense, fused with RRF, pre-filtered by tenant, date, product, language.</p></div><span class="gain">+10–25 recall</span></div>
+      <div class="rung"><span class="r">R3</span><div><h5>Cross-encoder reranking</h5><p>Score 100 candidates jointly with the query. Fixes precision, lets you cut <code>k</code> and shrink the prompt.</p></div><span class="gain">+10–20 nDCG</span></div>
+      <div class="rung"><span class="r">R4</span><div><h5>Query transformation</h5><p>Rewrite with conversation history, extract filters, decompose multi-part questions, HyDE on sparse corpora.</p></div><span class="gain">fixes hard queries</span></div>
+      <div class="rung"><span class="r">R5</span><div><h5>Agentic and graph retrieval</h5><p>A planner that routes to SQL, vector, or graph traversal and retrieves in several passes. Only when the question genuinely spans documents.</p></div><span class="gain">multi-hop only</span></div>
+    </div>
+    <p class="prose">Climb one rung at a time and re-measure. Teams that jump to R5 usually have an R2 problem and now have two problems.</p>
+
+    <h3 class="step"><span class="n">STAGE 05</span>Context assembly is a budget, not a dump</h3>
+    <p class="prose">More context is not more grounding. Long prompts lose the middle, cost linearly, and hide the reranker's work. Pack 5–8 passages, best first, each with its source id, date and heading path so the model can cite precisely. Deduplicate near-identical passages before packing — three copies of the same wire story crowd out the passage that actually answers the question. Set a hard token ceiling and drop from the bottom.</p>
+
+    <h3 class="step"><span class="n">STAGE 06</span>Generation: cite, or abstain</h3>
+    <p class="prose">Ground the instruction in the retrieved set: answer only from the passages, cite the id after each claim, and say plainly when the passages do not contain the answer. Then make abstention <b>mechanical</b> rather than hoped-for — if the top reranker score is below your threshold, do not call the model at all; return the fallback. Every domain in the catalog above that touches health, money, safety or law needs this gate, and it is twenty lines of code.</p>
+
+    <h3 class="step" id="budget"><span class="n">STAGE 07</span>The latency budget</h3>
+    <p class="prose">Decide the budget before you build, then hold every stage to its line. A 2-second p95 for a fully grounded answer is achievable on ordinary infrastructure; here is where it goes.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Stage</th><th class="num-cell">Typical p95</th><th>How it gets slow</th><th>The lever</th></tr></thead>
+        <tbody>
+          <tr><td>Query rewrite</td><td class="num-cell">80 ms</td><td>Big model for a small job</td><td>Small fast model; skip when no history</td></tr>
+          <tr><td>Embed query</td><td class="num-cell">15 ms</td><td>Cold remote call per request</td><td>Co-locate or cache; batch under load</td></tr>
+          <tr><td>ANN + BM25 search</td><td class="num-cell">40 ms</td><td><code>efSearch</code> cranked for recall</td><td>Run channels in parallel; tune on the recall–latency curve</td></tr>
+          <tr><td>Fusion</td><td class="num-cell">2 ms</td><td>—</td><td>—</td></tr>
+          <tr><td>Rerank 100 → 8</td><td class="num-cell">120 ms</td><td>Reranking everything, sequentially</td><td>Cap candidates; batch; distilled reranker</td></tr>
+          <tr><td>Context assembly</td><td class="num-cell">10 ms</td><td>Re-fetching parent docs one by one</td><td>Multi-get; keep parents in a KV store</td></tr>
+          <tr><td>Generation (TTFT)</td><td class="num-cell">500 ms</td><td>Huge prompt, no streaming</td><td>Stream; cut <code>k</code>; cache the static prompt prefix</td></tr>
+          <tr><td>Grounding check</td><td class="num-cell">60 ms</td><td>A second full LLM pass</td><td>Check citations by string match; sample the LLM audit</td></tr>
+          <tr><td><b>Total</b></td><td class="num-cell"><b>≈ 830 ms + stream</b></td><td>—</td><td>Everything above runs before the first token</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <span class="lbl">Three caches, three different keys</span>
+      <p><b>Exact cache</b> — hash of (normalised query + filters + corpus version). Hits 15–30% of production traffic on support-style workloads. <b>Semantic cache</b> — embed the query, return a stored answer above ~0.95 similarity; powerful and dangerous, so scope it per tenant and expire it on corpus change. <b>Retrieval cache</b> — key on the rewritten query and filter set, store the reranked passage ids; survives prompt changes, which the answer caches do not.</p>
+    </div>
+
+    <h3 class="step" id="scale"><span class="n">STAGE 08</span>Scaling: memory, freshness, tenancy</h3>
+    <p class="prose">Vector search scale is mostly an arithmetic problem. Ten million chunks at 1024 dimensions in fp32 is about 41 GB of raw vectors, plus roughly 3 GB of HNSW graph. Quantise to int8 and the vectors drop to about 10 GB — a single machine instead of a cluster — at a recall cost you can measure and usually cannot perceive once a reranker follows. Binary quantisation with a full-precision rescoring pass goes further still.</p>
+    <ul class="list">
+      <li><b>Shard by a filter people actually use</b> — tenant, region, year, product line. A shard you can skip entirely is faster than any index tuning.</li>
+      <li><b>Pre-filter, never post-filter, for access control.</b> ACL tags live in the index next to the chunk, and the filter is applied inside the search. Post-filtering a leaked passage after it reached the prompt is not access control, it is a breach with a tidy log line.</li>
+      <li><b>Incremental upsert with content hashes and tombstones.</b> Full rebuilds are how "the answer cites a deleted document" happens. Track and alert on a staleness SLO: time from source change to searchable.</li>
+      <li><b>Tier your storage.</b> Hot shards in memory, cold years on disk or object storage, promoted on access. Most corpora have a brutal recency skew — exploit it.</li>
+      <li><b>Right-size the models.</b> Small model for rewriting and classification, large model only for the final answer. This one split often halves the bill.</li>
+      <li><b>Ingest asynchronously.</b> Queue-driven workers, idempotent by hash, with a dead-letter queue for documents that fail parsing — they will, and you need to see them.</li>
+    </ul>
+
+    <h3 class="step" id="eval"><span class="n">STAGE 09</span>Evaluation: the part that makes the rest possible</h3>
+    <p class="prose">Build the golden set before the pipeline. Fifty to two hundred real questions, each with the passages that answer it and a reference answer, including <b>unanswerable</b> questions — a system that never abstains will fail exactly where the stakes are highest. Then split the scoreboard, because a retrieval bug and a generation bug have nothing in common.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Metric</th><th class="num-cell">Ship target</th><th>Tells you</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieval</td><td>Recall@20</td><td class="num-cell">≥ 0.90</td><td>Is the answer even in the candidate set — the ceiling on everything downstream</td></tr>
+          <tr><td>Retrieval</td><td>nDCG@10</td><td class="num-cell">≥ 0.70</td><td>Is the reranker putting the right passage first</td></tr>
+          <tr><td>Generation</td><td>Faithfulness</td><td class="num-cell">≥ 0.95</td><td>Every claim traceable to a retrieved passage</td></tr>
+          <tr><td>Generation</td><td>Citation precision</td><td class="num-cell">≥ 0.90</td><td>The cited passage actually supports the sentence</td></tr>
+          <tr><td>Generation</td><td>Abstention accuracy</td><td class="num-cell">≥ 0.90</td><td>Refuses when it should, answers when it can</td></tr>
+          <tr><td>Online</td><td>Deflection / accept rate</td><td class="num-cell">domain-set</td><td>Whether it is worth running at all</td></tr>
+          <tr><td>Online</td><td>p95 latency, cost / query</td><td class="num-cell">budgeted</td><td>Whether it survives contact with traffic</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">Wire the golden set into CI and block merges on regression. Log every request with its retrieved ids, scores and final answer, so a complaint on Tuesday can be replayed exactly on Wednesday. Feed thumbs-down cases back into the golden set — that loop, not any model upgrade, is what makes the system better over a year.</p>
+
+    <h3 class="step" id="failures">Failure modes and what they actually mean</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Symptom</th><th>Usual cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>The right document exists but never comes back</td><td>Chunks too large; no lexical channel; jargon the embedder never saw</td><td>Add BM25 and fuse; shrink chunks; verify with recall@50 before touching anything else</td></tr>
+          <tr><td>Retrieval looks right, answer is wrong</td><td>Too many passages, best one buried mid-prompt</td><td>Rerank, cut to 5–8, best first, cite per claim</td></tr>
+          <tr><td>Confidently answers what it does not know</td><td>No abstention gate and no unanswerable questions in the eval set</td><td>Score threshold before the model call; add refusal cases to the golden set</td></tr>
+          <tr><td>Cites a superseded or deleted document</td><td>No effective-date metadata; rebuild-only indexing</td><td>Effective-date filters; tombstones on delete; staleness alert</td></tr>
+          <tr><td>Table questions get the wrong number</td><td>Table split mid-way; headers lost in the chunk</td><td>Table-aware parsing; row-wise serialisation with repeated headers; a summary chunk per table</td></tr>
+          <tr><td>Fast in dev, slow in production</td><td>Sequential calls, <code>efSearch</code> too high, no caching, cold embedder</td><td>Parallelise channels; tune on the recall–latency curve; add all three caches</td></tr>
+          <tr><td>Cost per query keeps climbing</td><td>Reranking everything, 30-passage prompts, large model for every step</td><td>Cascade; cap context tokens; small models for rewrite and classify</td></tr>
+          <tr><td>A user sees another tenant's content</td><td>Filtering applied after retrieval</td><td>ACL tags in the index, pre-filtered search, 10k-probe permission audit in CI</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="step" id="path">The build path</h3>
+    <div class="ladder">
+      <div class="rung"><span class="r">P1</span><div><h5>Golden set, before any code</h5><p>50 real questions from real users, the passages that answer them, and 10 that nothing answers. Without this you are tuning blind.</p></div><span class="gain">1–2 days</span></div>
+      <div class="rung"><span class="r">P2</span><div><h5>Thin end-to-end slice</h5><p>One corpus, layout-aware parsing, fixed chunking, dense retrieval, citations rendered. Measure recall@20 and faithfulness. Do not optimise yet.</p></div><span class="gain">week 1</span></div>
+      <div class="rung"><span class="r">P3</span><div><h5>Fix retrieval</h5><p>Hybrid + RRF, metadata filters, cross-encoder rerank, small-to-big context. Re-measure after each change, one at a time.</p></div><span class="gain">week 2</span></div>
+      <div class="rung"><span class="r">P4</span><div><h5>Fix generation</h5><p>Prompt with cite-or-abstain, the score-threshold gate, structured output, grounding check on the response.</p></div><span class="gain">week 3</span></div>
+      <div class="rung"><span class="r">P5</span><div><h5>Make it fast and cheap</h5><p>Three caches, parallel retrieval channels, int8 quantisation, streaming, model right-sizing. Hold the latency table.</p></div><span class="gain">week 4</span></div>
+      <div class="rung"><span class="r">P6</span><div><h5>Make it operable</h5><p>Incremental indexing with tombstones, ACL pre-filtering, full request logging, CI eval gate, feedback loop into the golden set.</p></div><span class="gain">ongoing</span></div>
+    </div>
+
+    <h4 class="sub">Anti-patterns worth naming</h4>
+    <ul class="list">
+      <li>Reaching for a framework abstraction before you can explain your own retrieval scores. Frameworks are fine — starting there means you cannot debug what they hide.</li>
+      <li>One giant knowledge base spanning unrelated domains. Separate corpora with a router beat one index that dilutes every query.</li>
+      <li>Evaluating by vibes in a demo. Three people trying ten questions is not a measurement.</li>
+      <li>Re-embedding the entire corpus on every content change, then wondering why indexing costs more than inference.</li>
+      <li>Stuffing fifty passages in "just in case". It lowers accuracy and raises the bill at the same time.</li>
+      <li>Treating a bigger model as the fix for bad retrieval. If the passage is not in the prompt, no model can read it.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>RAG Field Manual — 30 project specifications and the architecture they share.<br>
+    Difficulty tiers reflect system mechanism, not domain expertise. Latency and sizing figures are order-of-magnitude planning numbers; measure on your own corpus before committing to any of them.</p>
+  </div>
+</footer>
+
+<script>
+const P = [
+/* ---------------- EASY ---------------- */
+{t:1,ind:"Retail & E-commerce",title:"Returns and policy concierge",
+use:"A shopper asks whether a swimsuit can go back after 40 days and gets the policy-accurate answer with the clause it came from.",
+req:["Single corpus of ~300 policy pages, re-indexed nightly","Every answer cites the policy section and its effective date","Below the score threshold, hand off to a human instead of guessing"],
+inp:["Help-centre HTML and returns, shipping and warranty policy PDFs","Product care and category attributes from the catalogue feed (CSV)","Historical contact-centre questions for the golden set"],
+out:["A two to four sentence answer in the shopper's words","Deep link to the exact policy clause plus its effective date","Deflect-or-escalate decision passed to the support widget"],
+tags:["recursive chunking","dense top-k","citation rendering","abstention"],
+ship:"85% clause-exact accuracy on 100 labelled shopper questions and p95 under 2s."},
+
+{t:1,ind:"Higher Education",title:"Registrar and syllabus desk",
+use:"Students ask about deadlines, prerequisites and grading policy across 400 syllabi and the academic calendar.",
+req:["Term and programme metadata filters so a 2026 answer never quotes a 2023 syllabus","Scope to a single course when the student names one","Route eligibility and appeals questions to a human advisor"],
+inp:["Syllabus PDFs and DOCX, one per course section","Academic calendar table and programme requirement catalogue","Course code and prerequisite list from the student system"],
+out:["Direct answer with course code and syllabus page cited","Dates normalised to ISO format with the term named","Advisor hand-off for anything policy-discretionary"],
+tags:["metadata filters","per-course scoping","date normalisation"],
+ship:"Zero cross-term contamination on 50 probe questions; recall@5 at or above 0.90."},
+
+{t:1,ind:"Local Government",title:"Permits and city services desk",
+use:"Residents ask which permit they need, what it costs and what to bring to the counter.",
+req:["Plain-language answers at roughly an eighth-grade reading level","English and Spanish served from the same index with parity checks","Every answer links the actual application form"],
+inp:["Municipal code chapters and fee schedules with tables","Department FAQ pages and office-hours listings","Fillable form PDFs with their form numbers"],
+out:["Ordered step list with required documents checklist","Fee amount with its effective date","Link to the correct form plus the office and its hours"],
+tags:["table-aware parsing","multilingual index","readability check"],
+ship:"90% of answers carry the correct form link; bilingual parity verified on 40 paired questions."},
+
+{t:1,ind:"Human Resources",title:"Handbook and benefits answers",
+use:"Employees ask about PTO accrual, parental leave and expense rules without opening a ticket.",
+req:["Entity-scoped retrieval so the US handbook never answers a German employee","No personal data written to query logs","Eligibility edge cases escalate to an HR business partner"],
+inp:["Employee handbook per legal entity and benefits summary documents","Expense and travel policy, holiday calendars per country","Job-family definitions for role-specific policies"],
+out:["Answer with the handbook section and entity named","Entity-specific caveat when policies diverge","Pre-filled HR ticket draft when escalation triggers"],
+tags:["entity pre-filter","PII redaction","escalation policy"],
+ship:"100% entity-correct on the audit set and zero personal data rows in the query log."},
+
+{t:1,ind:"Developer Tools SaaS",title:"API documentation copilot",
+use:"Developers ask how to authenticate, paginate or handle a 429, and get an answer grounded in the version of the docs they are on.",
+req:["Version-aware retrieval keeping v2 and v3 strictly separate","Code fences never split by chunking","Re-index automatically on every documentation deploy"],
+inp:["Markdown and MDX documentation, OpenAPI specification","Changelog, migration guides and SDK reference","Language preference and SDK version from the caller"],
+out:["Prose answer plus a snippet in the caller's language","Anchored deep links into the docs and a version badge","Related-endpoint suggestions from the spec"],
+tags:["code-aware chunking","version namespaces","CI-triggered indexing"],
+ship:"Snippets compile in CI for 95% of the eval set; docs deploy to searchable in under 10 minutes."},
+
+{t:1,ind:"Restaurants & Hospitality",title:"Allergen and menu lookup",
+use:"Staff and guests check ingredients, allergens and substitutions across a sixty-location restaurant group.",
+req:["Location-scoped menus, since the same dish differs by kitchen","Conservative allergen behaviour: unknown means ask the kitchen, never a guess","Sub-second responses on floor-staff tablets"],
+inp:["Menu spreadsheets per location and seasonal updates","Supplier ingredient sheets (PDF) and the allergen matrix","Preparation notes covering shared fryers and cross-contact"],
+out:["Verdict of contains, may contain, or free-of, with the source line","Full ingredient list and a substitution suggestion","Explicit prompt to confirm with the kitchen when uncertain"],
+tags:["strict abstention","structured field retrieval","per-location index"],
+ship:"Zero false allergen-free answers on the red-team set; p95 under 800 ms."},
+
+{t:1,ind:"Real Estate",title:"Lease clause explainer",
+use:"Property managers and tenants ask what a specific lease says about pets, subletting or early termination.",
+req:["Per-document scoping with tenant-level access control","Quote the clause verbatim before paraphrasing it","Jurisdiction disclaimer on every answer"],
+inp:["Scanned lease PDFs run through OCR, plus addenda and riders","State landlord-tenant summaries and property rulebooks","Tenant-to-lease mapping from the management system"],
+out:["Verbatim clause text followed by a plain-English reading","Page and section reference into the source lease","Not-legal-advice notice and escalation to the manager"],
+tags:["OCR ingestion","per-document ACL","quote-then-explain"],
+ship:"Clause retrieval accuracy at or above 90% across 60 leases; every answer contains a verbatim quote."},
+
+{t:1,ind:"Nonprofit & Grants",title:"Grant eligibility pre-screen",
+use:"Programme staff check whether an organisation and project qualify before spending a week on the application.",
+req:["Retrieval across many funders with funder and deadline filters","Produce a checklist of requirements, never a yes-or-no verdict","Flag requirements that conflict between funders"],
+inp:["Funder RFP and guideline PDFs with eligibility criteria","The organisation's own profile: budget, status, service area","Prior successful applications for language reuse"],
+out:["Checklist marking each requirement met, unmet or unknown","Supporting quote from the guideline for each item","Deadline, submission format and the gaps left to resolve"],
+tags:["multi-source retrieval","per-funder filters","structured JSON output"],
+ship:"Recall of hard eligibility requirements at or above 0.90 across 25 RFPs."},
+
+{t:1,ind:"Airlines & Travel",title:"Fare rules and disruption desk",
+use:"Agents and passengers ask about change fees, baggage allowances and entitlements when a flight is cancelled.",
+req:["Scope retrieval by fare family, route and cabin","Keep carrier policy distinguishable from regulation (EU261, DOT)","Show the effective date on every rule quoted"],
+inp:["Fare rule text, conditions of carriage, baggage tables","Irregular-operations playbook and rebooking rules","Regulator entitlement summaries by jurisdiction"],
+out:["Entitlement answer with the fee or allowance figure","Attribution separating airline policy from regulation","Next action for the agent and the wording to read aloud"],
+tags:["table extraction","source-type tagging","effective-date filter"],
+ship:"95% correct fee figures across 80 scenarios with no policy-versus-regulation mix-ups."},
+
+{t:1,ind:"Consumer Electronics",title:"Manual-driven troubleshooting",
+use:"An owner types a symptom such as E4 on the display and gets the fix from the right model's manual.",
+req:["Identify the model from the question or serial before retrieving","Return repair steps in order, with the referenced figure","Know when to stop and book a service visit"],
+inp:["Product manuals as PDF with figures and error-code tables","Service bulletins and firmware release notes","Warranty terms and the registered product record"],
+out:["Ordered repair steps with the error code's meaning","The relevant diagram image alongside its step","Warranty status hint and a service-booking trigger"],
+tags:["model metadata filter","figure extraction","code table lookup first"],
+ship:"Correct model chosen 98% of the time and first-answer resolution at or above 80% on 100 real tickets."},
+
+/* ---------------- MEDIUM ---------------- */
+{t:2,ind:"Healthcare Provider",title:"Clinical guideline and formulary assistant",
+use:"Clinicians ask dosing, interaction and care-pathway questions answered only from the institution's approved guidelines and formulary.",
+req:["Hybrid BM25 and dense retrieval — drug names and codes fail on embeddings alone","Every claim tied to a guideline version and section","Hard refusal outside the approved corpus, with a full audit record"],
+inp:["Institutional care pathways, formulary tables, drug monographs","National guideline PDFs and their revision history","RxNorm and ICD code sets for lexical matching"],
+out:["Answer with inline citations to guideline, section and version","Contraindication and interaction callouts pulled from the monograph","Immutable audit record of the context used, plus a decision-support banner"],
+tags:["hybrid + rerank","lexical code boost","abstention gate","audit trail"],
+ship:"Faithfulness at or above 0.95 on a clinician-reviewed set; 100% of answers cite an in-corpus source."},
+
+{t:2,ind:"Retail Banking",title:"Live contact-centre agent assist",
+use:"While the call is still going, the right procedure, policy quote and next step appear on the agent's screen.",
+req:["Under 1.5s from transcript segment to suggestion","Filter by product, customer segment and region, with agent entitlement checks","Suggestions must be quotable to the customer verbatim"],
+inp:["Policy and procedure manuals, product terms and conditions","Streaming call transcript from ASR and CRM case notes","Regulator guidance and mandated disclosure scripts"],
+out:["Ranked answer cards with procedure steps and the quoted policy","The compliance disclosure to read aloud","Suggested disposition code written back to the CRM"],
+tags:["streaming query formation","hybrid + rerank","ACL filters","semantic cache"],
+ship:"p95 suggestion latency under 1.5s, agent accept rate at or above 40%, handle time down 15%."},
+
+{t:2,ind:"Insurance",title:"Claims adjuster coverage copilot",
+use:"An adjuster asks whether a specific loss is covered under a specific policy, endorsements included.",
+req:["Assemble the policy as it stood on the loss date: base wording plus endorsements","Reason across limit, deductible and sub-limit tables","Separate what the wording says from what the adjuster must decide"],
+inp:["Policy wordings, endorsement PDFs and schedules of limits","First notice of loss, claim file notes and loss photographs","Prior claims on the same policy and jurisdictional bulletins"],
+out:["Draft coverage position with clause-level citations","Limits and deductible summary table for this claim","Exclusions triggered and the open questions the adjuster must answer"],
+tags:["effective-dated assembly","table-aware chunking","multi-doc synthesis"],
+ship:"Correct wording version selected 100% of the time; agreement with a senior adjuster at or above 80%."},
+
+{t:2,ind:"Industrial Manufacturing",title:"Field-service technician assistant",
+use:"On the plant floor a technician asks how to service an asset and gets the procedure plus what failed on this machine before.",
+req:["Works on a tablet through intermittent connectivity via a local index that syncs","Fuse OEM procedures with this asset's own work-order history","Return the diagram with the step that references it"],
+inp:["OEM manuals (S1000D or PDF) and parts catalogue","CMMS work orders, alarm history and prior repair photographs","Asset register with model, serial and installed options"],
+out:["Step-by-step procedure with safety and lockout warnings","Parts and tools list validated against the catalogue","The last three failures on this asset and how they were resolved"],
+tags:["on-device quantised index","asset-id join","multimodal figures","offline-first sync"],
+ship:"Fully usable offline for an eight-hour shift; median time-to-procedure under 30s; parts accuracy at or above 90%."},
+
+{t:2,ind:"Legal Services",title:"Contract review against a playbook",
+use:"An incoming contract is reviewed clause by clause against the firm's negotiation playbook, with deviations flagged.",
+req:["Clause-level segmentation rather than fixed-size chunks","For each clause type, retrieve the playbook position and precedent language","Every flag carries a suggested redline and a fallback position"],
+inp:["Incoming contract in DOCX or PDF, plus the negotiation playbook","Precedent clause bank and prior executed agreements","Risk taxonomy and approval thresholds"],
+out:["Clause table: type, risk rating, deviation, playbook position, redline","Summary memo of the material issues in negotiation order","Reviewer queue with the model's confidence per clause"],
+tags:["clause classification","per-type indexes","structured output","human review"],
+ship:"90% of high-risk clauses flagged on a 40-contract benchmark with a false-flag rate under 15%."},
+
+{t:2,ind:"News & Media",title:"Newsroom archive research desk",
+use:"A reporter asks what the paper has published about a company's safety record since 2019 and gets a sourced brief.",
+req:["Recency- and entity-aware retrieval across two million articles","Collapse wire duplicates and reruns before ranking","Never blend archival claims with today's facts without dates attached"],
+inp:["Thirty-year article archive, wire feeds and photo captions","Reporter notes and the newsroom entity and topic taxonomy","Corrections log, so retracted claims are excluded"],
+out:["Chronological brief with per-claim citation to article and date","Entity timeline of the events found","Deduplicated source list with the earliest publication first"],
+tags:["time-decay ranking","near-duplicate detection","entity linking","map-reduce summary"],
+ship:"nDCG@10 at or above 0.70 against librarian judgements; duplicates under 5% of returned results."},
+
+{t:2,ind:"EdTech",title:"Course tutor over textbook and lectures",
+use:"A learner asks a concept question and gets an explanation anchored to the textbook section and the exact lecture minute.",
+req:["Align transcript chunks to video timestamps within a few seconds","Adapt explanation depth to the learner's level in the course","Never surface answers to graded assessments"],
+inp:["Textbook with chapter and section structure, slide decks","Lecture video with ASR transcripts and word-level timings","Problem sets with solutions in a restricted namespace"],
+out:["Explanation with the textbook section referenced","Deep link to the video at the timestamp that covers it","A practice question, with graded-item answers withheld"],
+tags:["timestamped chunking","section hierarchy metadata","restricted namespace"],
+ship:"Citations land within 10s of the right moment 95% of the time; zero solution leakage in red-team tests."},
+
+{t:2,ind:"Logistics & Trade",title:"Customs classification and tariff advisor",
+use:"An analyst describes a product and gets a defensible HS code with duty rate and the documents the shipment needs.",
+req:["Retrieval across a hierarchy — chapter, heading, subheading — not flat text","Combine legal notes with prior binding rulings before ranking codes","Show the reasoning that separates the top candidates"],
+inp:["HS and HTS nomenclature with explanatory notes","Binding rulings database and rules of origin for active trade agreements","Past shipment declarations and product specifications"],
+out:["Ranked candidate codes with duty rate and the deciding note quoted","Required documents and origin evidence for the chosen code","Confidence score and a seek-broker-review flag under threshold"],
+tags:["hierarchy-aware retrieval","rules + retrieval hybrid","JSON to TMS"],
+ship:"Top-1 matches the broker decision at or above 80% and top-3 at or above 95% across 200 historical shipments."},
+
+{t:2,ind:"Cybersecurity",title:"SOC alert triage assistant",
+use:"For a firing alert, the runbook, the similar past incidents and the relevant intel arrive together with a proposed first step.",
+req:["Join a structured alert payload with unstructured knowledge","Threat intel searchable within minutes of publication","Strictly read-only: it proposes containment, it never executes it"],
+inp:["Detection runbooks, past incident tickets and postmortems","Threat intel feeds (STIX) and vendor advisories","Asset inventory and the alert payload itself (JSON)"],
+out:["Triage summary with matched runbook steps in order","Similar prior incidents and how each was resolved","ATT&CK technique mapping and a recommended next action with confidence"],
+tags:["structured-to-query templating","freshness-weighted ranking","streaming ingest","no-write tools"],
+ship:"Analyst agreement with the proposed step at or above 75%; intel searchable within 15 minutes of publication."},
+
+{t:2,ind:"Agriculture",title:"Agronomy advisory for smallholder networks",
+use:"Field agents and farmers ask what to spray, when to plant and how to treat a symptom, in their own language, on a weak connection.",
+req:["Multilingual retrieval over an English plus local-language corpus","Fuse static agronomy protocols with this location's weather and soil records","Answers must fit an SMS or WhatsApp message on 2G"],
+inp:["Crop protocol PDFs, extension bulletins, pesticide label registry","Weather history and forecast API, soil test records by plot","Farmer-submitted photographs of the affected crop"],
+out:["Advice under 320 characters, in the language of the question","Dosage inside the label's legal limits, with the label cited","Timing window tied to the local forecast, plus an escalate-to-agronomist flag"],
+tags:["multilingual embeddings","structured data join","response compression","edge cache"],
+ship:"Agronomist-rated correctness at or above 85% across three languages, answering in under 5s on 2G."},
+
+/* ---------------- ADVANCED ---------------- */
+{t:3,ind:"Pharmaceutical R&D",title:"Evidence synthesis over a knowledge graph",
+use:"A scientist asks whether a target has support in an indication and gets a synthesis across papers, trials and internal study reports, with the contradictions named.",
+req:["Multi-hop retrieval over a target–compound–trial–indication graph, fused with vector search","Label evidence strength and surface contradictions rather than averaging them","Paragraph-level provenance; internal documents never leave the private deployment"],
+inp:["Full-text literature, ClinicalTrials records, patents","Internal clinical study reports and lab notebooks","Ontologies: MeSH, ChEBI, UniProt, plus an in-house target dictionary"],
+out:["Synthesis with an evidence table: claim, direction, study, n, quality","Explicit contradiction list with both sides cited","The graph path behind the conclusion and an exportable citation set"],
+tags:["GraphRAG","multi-hop planner","evidence grading","on-prem inference"],
+ship:"Expert-rated synthesis at or above 4 of 5; every claim traceable to a paragraph; zero cross-corpus leakage in audit."},
+
+{t:3,ind:"Investment Research",title:"Multi-hop analyst copilot",
+use:"How segment margin moved across five peers since a tariff change, and what each management team said about it — answered in one pass.",
+req:["Route sub-questions: text-to-SQL for figures, vector for narrative, transcript index for commentary","Decompose multi-entity questions and recompose the answer with entities resolved across tickers and CIKs","Every number reconciles to its source table or the answer is blocked; MNPI stays segregated"],
+inp:["SEC filings with XBRL facts and narrative text","Earnings-call audio, transcripts with speaker labels and timestamps","Broker notes, internal models and market time-series (Parquet)"],
+out:["Analyst brief with a peer comparison table sourced cell by cell","Quoted management commentary with speaker and timestamp","Chart-ready series and a full audit trail of the queries run"],
+tags:["agentic planner","tool routing SQL + vector","numeric verification","entity resolution"],
+ship:"Numeric reconciliation at 100% — any mismatch blocks the answer — and multi-hop accuracy at or above 70% on 150 analyst questions."},
+
+{t:3,ind:"Energy & Utilities",title:"Grid asset condition intelligence",
+use:"An engineer asks why a transformer bank is flagged and gets telemetry trends, inspection imagery findings and the standard that sets the threshold.",
+req:["Fuse time-series telemetry, thermal and drone imagery, and standards text in one answer","Temporal reasoning: has this worsened since June, and by how much","Geospatial and regional filtering across more than ten million assets"],
+inp:["SCADA and PMU time-series, inspection reports","Drone and thermal imagery with geotags and EXIF","IEEE and IEC standards, maintenance history, GIS asset layers"],
+out:["Condition assessment with trend data and the change since last inspection","Annotated image evidence with the defect located","The standard's threshold quoted, plus a prioritised intervention"],
+tags:["multimodal embeddings","time-series to text summaries","geo + temporal filters","regional sharding"],
+ship:"Engineer agreement at or above 80% on 100 flagged assets, with p95 under 3s across a ten-million-asset index."},
+
+{t:3,ind:"Aerospace MRO",title:"Airworthiness compliance assistant",
+use:"A mechanic asks for the current approved procedure and gets it only from the revision in force — inside an air-gapped facility.",
+req:["Revision-controlled retrieval with a diff showing what changed between revisions","Runs fully offline on self-hosted models inside the secure network","Answers replayable years later: archive the exact retrieved context, and validate every part number against the parts master"],
+inp:["S1000D data modules, AMM and CMM manuals","Airworthiness Directives and Service Bulletins with applicability","Parts master, effectivity data and prior signed task cards"],
+out:["Procedure with the effective revision and AD applicability stated","Revision diff highlighting what changed since the last release","Validated parts list and a signed audit record of the context used"],
+tags:["air-gapped stack","versioned index snapshots","entity validation","deterministic decoding"],
+ship:"100% correct revision on the audit set, zero unvalidated part numbers emitted, and any answer replayable from its snapshot."},
+
+{t:3,ind:"Public Health",title:"Cross-lingual outbreak signal briefing",
+use:"An epidemiologist opens a daily brief of emerging signals drawn from news, ministry bulletins and surveillance reports in twenty languages.",
+req:["Continuous ingestion with deduplication and entity resolution across transliterations and spellings","Rank by signal novelty against a rolling baseline, not by similarity","Tier sources explicitly so confirmed reports never read like rumour"],
+inp:["Multilingual news feeds, health-ministry bulletins, ProMED posts","WHO and ECDC situation reports, lab surveillance summaries","Historical baseline of reported events by location and pathogen"],
+out:["Ranked signals with location, pathogen, counts and source tier","Original-language quote beside its translation","Change-since-yesterday delta and a human review queue"],
+tags:["streaming ingest","cross-lingual embeddings","near-duplicate clustering","novelty scoring"],
+ship:"Under 30 minutes from publication to brief, duplicate-cluster purity at or above 0.90, and expert-rated precision at or above 0.80 on the top 20."},
+
+{t:3,ind:"Enterprise Knowledge Ops",title:"Permission-aware company-wide search",
+use:"Any employee asks anything and gets an answer built only from documents they are actually allowed to see.",
+req:["Access control enforced inside the search, never as a post-filter","Connectors to a dozen SaaS sources with incremental sync and deletion propagation","More than one hundred million chunks under a per-user latency budget, with a staleness SLO"],
+inp:["Drive, SharePoint, Confluence, Slack, Jira, Salesforce, Zendesk, GitHub, HRIS","Each source's permission graph, synced continuously","Org chart and group membership for group-level grants"],
+out:["Answer with citations to source system, document and permission-checked link","A notice when related documents exist but are not visible to this user","Freshness stamp per cited document"],
+tags:["ACL tags in index","permission-graph sync","tombstoned upserts","tiered shards"],
+ship:"Zero unauthorised passages in a ten-thousand-probe permission audit, p95 under 2.5s at 100M chunks, deletions reflected within 5 minutes."},
+
+{t:3,ind:"Semiconductor",title:"Silicon bring-up debug agent",
+use:"An engineer pastes a failing signature and asks what is wrong; the agent searches specs, RTL and the bug database before it answers.",
+req:["Agentic loop that can query the bug database, search RTL and retrieve spec sections across several passes","Machine logs parsed into templated, retrievable events rather than raw text","Propose the next experiment, not a summary — and keep the entire loop inside the design network"],
+inp:["Design specifications and integration guides, RTL and testbench code","Simulation and lab logs, waveform metadata","Bug database and ECO history"],
+out:["Ranked hypotheses, each with its own supporting evidence","Spec sections quoted and similar prior bugs linked","A concrete next test to run, with the signal to watch"],
+tags:["tool-using agent","log templating","hypothesis ranking","self-hosted models"],
+ship:"Root cause inside the top three hypotheses for at least 60% of 100 closed bugs, with a median loop under 60s."},
+
+{t:3,ind:"Health Payer",title:"Prior-authorisation decision support",
+use:"A nurse reviewer sees, criterion by criterion, whether the submitted clinical evidence meets the medical policy.",
+req:["Decompose each policy into checkable criteria and evaluate them individually against the record","Fuse structured clinical data (FHIR) with policy text and faxed notes","Appeal-grade, reproducible rationales; recommendation only — never an autonomous denial"],
+inp:["Medical policy documents, LCD and NCD coverage determinations","Member record as FHIR R4, claims history, code sets (CPT, ICD, HCPCS)","Submitted clinical notes and faxes requiring OCR"],
+out:["Criteria table marking met, not met or insufficient, each with an evidence pointer","Recommended disposition with an appeal-ready rationale","Audit bundle reproducing the decision on re-run, pending human sign-off"],
+tags:["criteria decomposition","structured + unstructured fusion","OCR pipeline","deterministic evaluation"],
+ship:"Nurse agreement at or above 90% on criterion-level labels, 100% rationale reproducibility, zero autonomous denials."},
+
+{t:3,ind:"Telecommunications",title:"Root-cause analysis over the network graph",
+use:"When alarms storm, the system explains what actually broke by walking the topology instead of summarising the noise.",
+req:["Graph traversal over live topology fused with vendor documentation and change history","Ingest alarm and syslog streams at fifty thousand events per minute","Correlate symptom to upstream cause and propose a fix with a rollback path"],
+inp:["Topology and inventory graph, updated continuously","Alarm and syslog streams, KPI time-series","Vendor manuals, release notes and change tickets"],
+out:["Root-cause statement with the causal path through the topology drawn","Correlated alarm cluster collapsed to one incident","Vendor procedure for the fix, blast-radius estimate and rollback steps"],
+tags:["GraphRAG on a live graph","streaming ingestion","causal path search","incremental graph updates"],
+ship:"Correct root cause at top-1 for at least 65% of past incidents, alarm to hypothesis under 90s at 50k events per minute."},
+
+{t:3,ind:"Video Streaming",title:"Timestamp-grounded video library Q&A",
+use:"Search and ask questions across a hundred thousand hours of video and land on the exact second that answers it.",
+req:["Index speech, on-screen text and visual scenes as separate modalities, fused at query time","Every answer cites a playable timestamp within a few seconds of the moment","Bounded ingest cost per hour, with rights and geo restrictions enforced inside retrieval"],
+inp:["Video files with shot boundaries and frame embeddings","ASR transcripts with word timings and subtitles in several languages","OCR of on-screen text, plus rights and territory metadata"],
+out:["Answer with playable deep links carrying start and end times","Ranked matching clips with the modality that matched shown","Per-clip rights and geo status for the requesting viewer"],
+tags:["multimodal indexing","late fusion across modality indexes","shot-level chunking","tiered ingest"],
+ship:"Correct clip in the top three for at least 75% of queries, citations within 3s, ingest cost held under the per-hour target."}
+];
+
+const TIER = {1:"Easy",2:"Medium",3:"Advanced"};
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const li = a => a.map(x => "<li>" + esc(x) + "</li>").join("");
+
+const host = document.getElementById("entries");
+host.innerHTML = P.map((p,i) => {
+  const n = String(i+1).padStart(2,"0");
+  return '<article class="entry t'+p.t+'" data-tier="'+p.t+'" data-text="'+
+    esc((p.ind+" "+p.title+" "+p.use+" "+p.tags.join(" ")+" "+p.req.join(" ")+" "+p.inp.join(" ")+" "+p.out.join(" ")).toLowerCase())+'">'+
+    '<div class="rail">'+
+      '<div class="num">'+n+'</div>'+
+      '<div class="meter" aria-hidden="true"><i></i><i></i><i></i></div>'+
+      '<div class="tier">'+TIER[p.t]+'</div>'+
+      '<div class="industry">'+esc(p.ind)+'</div>'+
+      '<ul class="tags">'+li(p.tags)+'</ul>'+
+    '</div>'+
+    '<div class="body">'+
+      '<h3>'+esc(p.title)+'</h3>'+
+      '<p class="use">'+esc(p.use)+'</p>'+
+      '<div class="specs">'+
+        '<div class="spec"><h4>Requirements</h4><ul>'+li(p.req)+'</ul></div>'+
+        '<div class="spec"><h4>Inputs</h4><ul>'+li(p.inp)+'</ul></div>'+
+        '<div class="spec"><h4>Outputs</h4><ul>'+li(p.out)+'</ul></div>'+
+      '</div>'+
+      '<p class="ship"><b>Ships when</b>'+esc(p.ship)+'</p>'+
+    '</div></article>';
+}).join("");
+
+const chips = [...document.querySelectorAll(".chip")];
+const q = document.getElementById("q");
+const countEl = document.getElementById("count");
+const emptyEl = document.getElementById("empty");
+let tier = "all";
+
+function apply(){
+  const term = q.value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll(".entry").forEach(el => {
+    const okTier = tier === "all" || el.dataset.tier === tier;
+    const okText = !term || el.dataset.text.includes(term);
+    const ok = okTier && okText;
+    el.hidden = !ok;
+    if (ok) shown++;
+  });
+  countEl.textContent = shown + (shown === 1 ? " shown" : " shown");
+  emptyEl.hidden = shown > 0;
+}
+
+chips.forEach(c => c.addEventListener("click", () => {
+  tier = c.dataset.tier;
+  chips.forEach(x => x.setAttribute("aria-pressed", String(x === c)));
+  apply();
+}));
+q.addEventListener("input", apply);
+apply();
+</script>

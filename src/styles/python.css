@@ -1,0 +1,145 @@
+/* ============================================================
+   Python — a notebook identity.
+   Warm neutral paper, plum accent, code as the primary object:
+   Chivo headings, Source Serif prose, IBM Plex Mono for every
+   snippet, label and token.
+   ============================================================ */
+
+:root[data-section="python"] {
+  --paper: #eae8e6;
+  --surface: #fbfaf9;
+  --surface-2: #f1efed;
+  --ink: #191619;
+  --ink-2: #423c42;
+  --muted: #756e75;
+  --line: #cbc5c8;
+  --line-soft: #ded9db;
+  --accent: #7b3b5e;
+  --accent-ink: #632d4b;
+  --amber: #8a6414;
+  --rust: #8f3a34;
+  --sel: #e3d0da;
+
+  --rag: #1d6b54;
+  --agt: #a8410f;
+
+  --code-bg: #f6f3f4;
+  --tk-com: #857b83;
+  --tk-str: #4a6b3f;
+  --tk-kw: #7b3b5e;
+  --tk-num: #8a6414;
+  --tk-dec: #2f6470;
+  --tk-bi: #3f4a5a;
+
+  --font-sans: var(--font-chivo), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--paper);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-section="python"]:not([data-theme="light"]) {
+    --paper: #141114;
+    --surface: #1b171b;
+    --surface-2: #201c20;
+    --ink: #ece6ea;
+    --ink-2: #c7bfc5;
+    --muted: #8e848c;
+    --line: #322c31;
+    --line-soft: #272227;
+    --accent: #d993b4;
+    --accent-ink: #eaaecb;
+    --amber: #d6b072;
+    --rust: #e08c85;
+    --sel: #3a2432;
+
+    --rag: #74c7a2;
+    --agt: #ef8a4c;
+
+    --code-bg: #1a161a;
+    --tk-com: #7e7480;
+    --tk-str: #9cc08b;
+    --tk-kw: #d993b4;
+    --tk-num: #d6b072;
+    --tk-dec: #86bcc7;
+    --tk-bi: #a8b6c9;
+  }
+}
+
+:root[data-theme="dark"][data-section="python"] {
+  --paper: #141114;
+  --surface: #1b171b;
+  --surface-2: #201c20;
+  --ink: #ece6ea;
+  --ink-2: #c7bfc5;
+  --muted: #8e848c;
+  --line: #322c31;
+  --line-soft: #272227;
+  --accent: #d993b4;
+  --accent-ink: #eaaecb;
+  --amber: #d6b072;
+  --rust: #e08c85;
+  --sel: #3a2432;
+
+  --rag: #74c7a2;
+  --agt: #ef8a4c;
+
+  --code-bg: #1a161a;
+  --tk-com: #7e7480;
+  --tk-str: #9cc08b;
+  --tk-kw: #d993b4;
+  --tk-num: #d6b072;
+  --tk-dec: #86bcc7;
+  --tk-bi: #a8b6c9;
+}
+
+/* ---------------------------- traps ---------------------------- */
+
+.traps {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.traps li {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  padding: 12px 0 12px 34px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.traps li::before {
+  content: "!";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rust);
+  color: var(--rust);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------------------------- misc ---------------------------- */
+
+[data-section="python"] .prose {
+  max-width: 68ch;
+}
+[data-section="python"] .kicker,
+[data-section="python"] .sec-num {
+  color: var(--accent);
+}
+
+@media (max-width: 620px) {
+  .code code {
+    font-size: 11.5px;
+    line-height: 1.7;
+  }
+  .code pre {
+    padding: 13px 14px;
+  }
+}
