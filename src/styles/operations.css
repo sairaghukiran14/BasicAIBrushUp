@@ -270,3 +270,19 @@
     gap: 8px;
   }
 }
+
+@media (max-width: 620px) {
+  .q-grid {
+    grid-template-columns: 1fr;
+  }
+  .q-card {
+    padding: 16px 14px 18px;
+  }
+  .check {
+    grid-template-columns: 1fr;
+  }
+  .check li {
+    font-size: 13.5px;
+  }
+}
+

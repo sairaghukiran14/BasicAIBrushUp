@@ -408,3 +408,20 @@
     padding: 16px 14px 18px;
   }
 }
+
+@media (max-width: 620px) {
+  .lvl-cards {
+    grid-template-columns: 1fr;
+  }
+  .block-grid {
+    grid-template-columns: 1fr;
+  }
+  .lvl-card {
+    padding: 16px 14px 18px;
+  }
+  .run-ship {
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+}
+

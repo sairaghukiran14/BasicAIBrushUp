@@ -260,3 +260,15 @@
     font-size: 13px;
   }
 }
+
+@media (max-width: 620px) {
+  .jump {
+    gap: 5px;
+    padding: 10px 0 2px;
+  }
+  .jump a {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+}
+

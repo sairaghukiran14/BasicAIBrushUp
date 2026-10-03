@@ -25,10 +25,74 @@ export const structuresTable: Table = {
     ["deque", "A bounded window where the oldest item should fall off", "O(1) at both ends", "The agent scratchpad, a rolling latency window"],
     ["defaultdict / Counter", "You accumulate into keys that may not exist yet", "no key checks", "RRF score accumulation, tool-error tallies"],
     ["heapq", "Top-k out of a stream you never want to fully sort", "O(n log k)", "Top passages, most expensive runs"],
+    ["bytes / bytearray", "Binary payloads, embeddings buffers, raw token IDs", "Zero-copy slices, compact memory", "Vector serialization, audio/image tokens"],
+    ["dataclass (slots=True)", "High-volume structured records in memory", "~60% less RAM than dict", "In-memory candidate chunks, telemetry spans"],
   ],
 };
 
 export const foundations: Snippet[] = [
+  {
+    id: "variables-mutability",
+    title: "Variables, mutability and object identity (is vs ==)",
+    why: "Primitives and tuples are immutable; lists and dicts are mutable references. Confusing value equality with object identity causes state leaks across requests.",
+    code: `import copy
+
+# Immutables: int, float, str, bool, tuple, frozenset, bytes
+# Mutables: list, dict, set, bytearray
+
+# 1. Identity ('is') tests memory address; Equality ('==') tests value
+x = [1, 2, 3]
+y = [1, 2, 3]
+assert x == y          # True: identical content
+assert x is not y      # True: distinct memory allocations (id(x) != id(y))
+
+# 2. Reference assignment vs Shallow / Deep copy
+default_tags = ["unassigned"]
+chunk_a = {"id": "c1", "tags": default_tags}
+chunk_b = {"id": "c2", "tags": default_tags}
+
+# BUG: in-place mutation alters the object shared by both references!
+chunk_a["tags"].append("reviewed")
+assert chunk_b["tags"] == ["unassigned", "reviewed"]  # Leaked!
+
+# FIX: deep copy for nested dictionaries and state snapshots
+safe_state = copy.deepcopy(chunk_a)
+safe_state["tags"].append("approved")
+assert "approved" not in chunk_a["tags"]`,
+    usedIn: ["rag", "agents"],
+    note: "In multi-turn agent loops and pipeline filters, state dictionaries passed between functions must be treated as immutable or deep-copied; in-place mutations of shared state dicts cause subtle cross-request contamination.",
+  },
+  {
+    id: "strings-text",
+    title: "String operations, f-strings and unicode normalization",
+    why: "Before embedding or prompting, raw strings must be deterministic, clean, and unicode-normalized; tokenizers encode differently across unicode forms.",
+    code: `import unicodedata
+
+raw_title = "   ###  2024 Financial Report — Q3  \\n\\t "
+
+# 1. Clean prefixes and whitespace (Python 3.9+)
+clean_title = raw_title.strip()
+if clean_title.startswith("###"):
+    clean_title = clean_title.removeprefix("###").strip()
+
+# 2. Unicode normalization (NFKC decomposes compatibility chars & recombines)
+# E.g., ligature 'ﬁ' becomes 'f' + 'i'; fullwidth characters become standard ASCII
+normalized = unicodedata.normalize("NFKC", clean_title)
+
+# 3. Modern f-strings: formatting numbers, currency, and self-documenting debug
+tokens = 14250
+latency_sec = 0.08472
+model_id = "claude-sonnet"
+
+# Number commas, float precision, and debug syntax (f"{var=}")
+log_msg = (
+    f"Query served with {model_id=}: "
+    f"tokens={tokens:,} | "             # 14,250
+    f"latency={latency_sec * 1000:.1f}ms" # 84.7ms
+)`,
+    usedIn: ["rag", "agents"],
+    note: "Unicode normalization is critical for vector search: 'café' in NFC is 4 codepoints while in NFD it is 5. If query and corpus use different forms, cosine similarity between identical words drops.",
+  },
   {
     id: "containers",
     title: "Pick the container for the question you will ask",
@@ -48,28 +112,37 @@ for chunk in stream:
     seen.add(h)
     by_id[chunk["id"]] = chunk`,
     usedIn: ["rag", "agents"],
-    note: "The `if h in seen` line is the whole point. Against a list of ten million hashes that loop is quadratic and your ingestion never finishes; against a set it is linear and finishes in minutes.",
+    note: "The 'if h in seen' check is the whole point. Against a list of ten million hashes that loop is quadratic and ingestion never finishes; against a set it is O(1) and finishes in minutes.",
   },
   {
     id: "loops",
-    title: "Loops, comprehensions and when each one is right",
-    why: "A comprehension maps or filters; a generator expression streams; an explicit loop is for side effects and early exit.",
-    code: `# comprehension: you are transforming a collection into another collection
+    title: "Loops, comprehensions and the for...else pattern",
+    why: "A comprehension maps or filters; an explicit loop maintains state; for...else executes only when a search loop finishes without a break.",
+    code: `# 1. Comprehension: transforming or filtering collections
 texts = [c["text"] for c in hits if set(c["acl"]) & user_groups]
 
-# generator expression: consumed once, never materialised
+# 2. Generator expression: consumed once, zero memory footprint
 total_tokens = sum(len(c["text"].split()) for c in hits)
 
-# explicit loop: side effects, early exit, or several things at once
+# 3. Explicit stateful loop: packing context within token budget
 kept, budget = [], MAX_CONTEXT_TOKENS
 for c in hits:                       # hits are score-ordered
     cost = len(c["text"].split())
     if cost > budget:
-        break                        # nothing below here fits either
+        break                        # stop: no lower-ranked chunk fits
     kept.append(c)
-    budget -= cost`,
+    budget -= cost
+
+# 4. for...else: clean search fallback without auxiliary boolean flags
+for c in hits:
+    if c.get("is_authoritative"):
+        target_chunk = c
+        break
+else:
+    # Runs ONLY if the loop completed with NO break
+    target_chunk = hits[0] if hits else None`,
     usedIn: ["rag"],
-    note: "That last loop is context assembly: pack best-first until the token budget runs out, then stop. It is deliberately not a comprehension — the running budget is state, and state means a loop.",
+    note: "The for...else construct avoids awkward 'found = False' variables. When searching retrieved passages or verifying agent tool results, the else-block handles the not-found fallback cleanly.",
   },
   {
     id: "conditionals",
@@ -90,6 +163,37 @@ for c in hits:                       # hits are score-ordered
     note: "Each guard is one rule from the playbooks, and each one is testable on its own. Nesting the same logic three ifs deep is how a refusal condition quietly stops firing.",
   },
   {
+    id: "scope-closures",
+    title: "Variable scope (LEGB), closures and name binding",
+    why: "Understanding Local, Enclosing, Global, Built-in (LEGB) prevents accidental global state and closure capture traps in loop callbacks.",
+    code: `# 1. The classic closure capture trap in loops
+handlers = []
+for i in range(3):
+    handlers.append(lambda: i)        # BUG: late binding captures 'i' reference!
+
+assert [h() for h in handlers] == [2, 2, 2]   # All return 2!
+
+# FIX: bind default argument at definition time
+safe_handlers = []
+for i in range(3):
+    safe_handlers.append(lambda step=i: step)
+
+assert [s() for s in safe_handlers] == [0, 1, 2]
+
+# 2. Stateful closure with 'nonlocal'
+def make_rate_limiter(max_calls: int):
+    count = 0
+    def check_limit():
+        nonlocal count                # binds to enclosing function scope
+        if count >= max_calls:
+            raise RuntimeError("Rate limit exceeded")
+        count += 1
+        return count
+    return check_limit`,
+    usedIn: ["rag", "agents"],
+    note: "In agent frameworks, tool-definition loops often create closures over tool schemas. Without default argument capture (tool=t), all registered tool wrappers point to the final tool in the registration loop.",
+  },
+  {
     id: "functions",
     title: "Functions with signatures you can trust",
     why: "Keyword-only arguments stop the call site from silently swapping k and the filter dict six months from now.",
@@ -107,6 +211,90 @@ for c in hits:                       # hits are score-ordered
 hits = search(question, k=50, filters={"tenant": tenant_id})   # unmistakable`,
     usedIn: ["rag", "agents"],
     note: "Keep the core pure and push I/O to the edges: a function that only transforms its arguments can be tested without a database, and the golden-set suite depends on exactly that.",
+  },
+  {
+    id: "oop-dunders",
+    title: "Classes, dunder methods and @property",
+    why: "Implementing __repr__, __eq__, and __hash__ transforms custom objects into first-class citizens that work inside sets, dicts, and debugging logs.",
+    code: `class SearchHit:
+    __slots__ = ("chunk_id", "score", "_metadata")
+
+    def __init__(self, chunk_id: str, score: float, metadata: dict | None = None):
+        self.chunk_id = chunk_id
+        self.score = score
+        self._metadata = metadata or {}
+
+    def __repr__(self) -> str:
+        return f"SearchHit(id={self.chunk_id!r}, score={self.score:.3f})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, SearchHit):
+            return NotImplemented
+        return self.chunk_id == other.chunk_id
+
+    def __hash__(self) -> int:
+        return hash(self.chunk_id)    # enables storing in set() and dict keys
+
+    @property
+    def is_confident(self) -> bool:   # read-only computed attribute
+        return self.score >= 0.75
+
+# Deduplicate hits in a set instantly:
+unique_hits = list(set([SearchHit("c1", 0.9), SearchHit("c1", 0.85)]))
+assert len(unique_hits) == 1`,
+    usedIn: ["rag", "agents"],
+    note: "__slots__ bypasses the instance __dict__, reducing memory usage by ~60%. When storing 500,000 candidate records in memory before reranking, slots prevent hundreds of megabytes of Python object bloat.",
+  },
+  {
+    id: "iterators-builtins",
+    title: "Iterators, zip(strict=True) and sorting keys",
+    why: "Pairing documents with scores or indices without manual counters or silent truncation on length mismatches.",
+    code: `doc_ids = ["doc_A", "doc_B", "doc_C"]
+scores = [0.94, 0.88, 0.72]
+
+# 1. zip with strict=True (Python 3.10+): raises ValueError if lengths differ
+paired = list(zip(doc_ids, scores, strict=True))
+
+# 2. enumerate with custom start: clean 1-based ranking
+for rank, (doc_id, score) in enumerate(paired, start=1):
+    print(f"#{rank}: {doc_id} -> {score}")
+
+# 3. Multi-attribute sorting: primary sort descending, secondary ascending
+items = [
+    {"id": "a", "tier": 1, "latency": 45},
+    {"id": "b", "tier": 2, "latency": 12},
+    {"id": "c", "tier": 1, "latency": 20},
+]
+# Sort by tier ascending, then latency ascending:
+sorted_items = sorted(items, key=lambda x: (x["tier"], x["latency"]))
+assert [x["id"] for x in sorted_items] == ["c", "a", "b"]`,
+    usedIn: ["rag", "agents"],
+    note: "Prior to Python 3.10, zip() silently stopped at the shortest iterable. If an embedding API returned fewer embeddings than input chunks, a naive zip(chunks, embeddings) silently dropped chunks without warning.",
+  },
+  {
+    id: "exceptions-flow",
+    title: "Exception control flow and causal chaining",
+    why: "Narrow try blocks avoid masking unrelated bugs; else runs on success; raise ... from err preserves the causal root traceback.",
+    code: `class RetrievalError(Exception):
+    """Base exception for retrieval failures."""
+
+def query_vector_db(query_vector: list[float], timeout: float = 2.0) -> list[dict]:
+    conn = pool.acquire()
+    try:
+        raw_results = conn.execute(query_vector, timeout=timeout)
+    except TimeoutError as err:
+        # Chaining: wraps timeout with domain error while preserving traceback
+        raise RetrievalError("Vector DB did not respond within latency budget") from err
+    except ConnectionResetError as err:
+        raise RetrievalError("Network connection reset by peer") from err
+    else:
+        # Runs ONLY if the try block succeeded without exceptions
+        return parse_hits(raw_results)
+    finally:
+        # Runs in ALL scenarios (success, exception, or early return)
+        pool.release(conn)`,
+    usedIn: ["rag", "agents"],
+    note: "The 'else' block prevents accidental catching of bugs inside parse_hits(). If parse_hits() raises a KeyError, it propagates cleanly instead of being mistaken for a database timeout.",
   },
   {
     id: "modules",
@@ -131,7 +319,7 @@ from rag.generate.guards import should_abstain
   },
   {
     id: "json-files",
-    title: "JSON, JSONL and file handling",
+    title: "Pathlib, JSON, JSONL and atomic file writes",
     why: "Corpora and traces are JSONL — one object per line — because it streams, appends, and survives a crash mid-write.",
     code: `import json
 from pathlib import Path
@@ -145,10 +333,12 @@ def read_jsonl(path: Path):
                 yield json.loads(line)
 
 def append_trace(path: Path, record: dict) -> None:
+    # Ensure parent directory exists before writing
+    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(record, ensure_ascii=False, default=str) + "\\n")
 
-docs = read_jsonl(CORPUS)                        # lazy: nothing read yet`,
+docs = read_jsonl(CORPUS)                        # lazy: nothing read into memory yet`,
     usedIn: ["rag", "agents"],
     note: "A single giant JSON array forces you to parse the whole file before the first record. JSONL lets ingestion start immediately, lets traces be appended by many workers, and lets a truncated last line be dropped instead of failing the file.",
   },
@@ -224,6 +414,32 @@ Channel = Literal["dense", "bm25", "fused"]
 def rrf(runs: dict[Channel, list[Chunk]], k: int = 60) -> list[Chunk]: ...`,
     usedIn: ["rag"],
     note: "Every field the RAG playbook tells you to keep — heading path, effective date, ACL tags — is a key on this record. If it is not in the type, it will not be in the index.",
+  },
+  {
+    id: "dataclasses-slots",
+    title: "Dataclasses with slots=True and frozen=True",
+    why: "Storing millions of chunks or spans in memory: slots=True cuts per-instance memory by ~60%, and frozen=True guarantees thread-safe immutability and instant hashability.",
+    code: `from dataclasses import dataclass, field
+from datetime import datetime, timezone
+
+@dataclass(slots=True, frozen=True)
+class TelemetrySpan:
+    span_id: str
+    name: str
+    latency_ms: float
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    tags: tuple[str, ...] = ()       # tuple, not list, to preserve frozen hashability
+
+    @property
+    def is_slow(self) -> bool:
+        return self.latency_ms > 250.0
+
+# 1. Memory: ~60 bytes vs ~150+ bytes for a standard class or dict
+# 2. Immutability: span.latency_ms = 100 raises FrozenInstanceError
+# 3. Hashable: can be stored in sets or used as cache keys directly
+cached_spans = {TelemetrySpan("s1", "embed", 42.1)}`,
+    usedIn: ["rag", "agents"],
+    note: "Plain dataclasses store attributes in an internal __dict__. At 500,000 vector records or telemetry spans, slots=True saves hundreds of megabytes of RAM and boosts attribute access speed by ~20%.",
   },
   {
     id: "validated-args",

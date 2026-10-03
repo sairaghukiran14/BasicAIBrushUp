@@ -252,6 +252,9 @@ code {
   display: none;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
+  max-height: calc(100dvh - var(--bar-h));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .drawer[data-open="true"] {
   display: block;
@@ -259,7 +262,7 @@ code {
 .drawer nav {
   display: flex;
   flex-direction: column;
-  padding: 8px 0 14px;
+  padding: 8px 0 20px;
 }
 .drawer a {
   font-family: var(--font-mono);
@@ -268,6 +271,9 @@ code {
   text-transform: uppercase;
   color: var(--ink-2);
   padding: 13px 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid var(--line-soft);
 }
 .drawer a[data-active="true"] {
@@ -1135,38 +1141,149 @@ td:first-child {
 
 @media (max-width: 620px) {
   :root {
-    --gutter: 18px;
+    --gutter: 16px;
+    --bar-h: 52px;
   }
   body {
     font-size: 14.5px;
   }
   .section {
-    padding: 40px 0;
+    padding: 34px 0;
+  }
+  .section-tight {
+    padding: 24px 0;
   }
   .masthead {
-    padding: 36px 0 26px;
+    padding: 28px 0 20px;
+  }
+  .masthead h1 {
+    font-size: clamp(28px, 7.5vw, 42px);
+    line-height: 1.05;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .lede {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: 14px;
+    max-width: 100%;
+  }
+  .kicker {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+  .step {
+    font-size: 17px;
+    margin: 30px 0 10px;
+    padding-top: 12px;
+  }
+  .sub {
+    font-size: 14.5px;
+    margin: 20px 0 6px;
   }
   .stat {
     border-right: 0;
     border-bottom: 1px solid var(--line-soft);
-    padding-bottom: 12px;
+    padding: 10px 0;
   }
   .stat:last-child {
     border-bottom: 0;
   }
+  .cta-row {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .cta-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .track-band,
+  .tier-cards,
+  .related {
+    grid-template-columns: 1fr !important;
+  }
+  .entry-rail {
+    grid-template-columns: auto 1fr;
+    gap: 8px 12px;
+  }
+  .entry-rail .industry {
+    grid-column: 1 / -1;
+    text-align: left;
+    margin-top: 2px;
+    padding-top: 0;
+    border-top: 0;
+    font-size: 12.5px;
+  }
   .filters {
     position: static;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  .chip {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 10.5px;
+    flex: 0 0 auto;
+  }
+  .search {
+    width: 100%;
+    flex: 1 1 100%;
+    min-height: 38px;
+  }
+  .count {
+    width: 100%;
+    text-align: right;
+    font-size: 10.5px;
   }
   .pager {
     grid-template-columns: 1fr;
+    margin-top: 32px;
   }
   .pager a:last-child {
     text-align: left;
     align-items: flex-start;
   }
-  .btn {
-    width: 100%;
-    justify-content: center;
+  .code {
+    margin: 14px 0 12px;
+  }
+  .code pre {
+    padding: 12px 14px;
+  }
+  .code code {
+    font-size: 11.5px;
+    line-height: 1.65;
+  }
+  .toc {
+    gap: 6px;
+    padding: 10px 0 2px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .toc a {
+    font-size: 10px;
+    padding: 5px 8px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .snip {
+    padding: 18px 0 22px;
+  }
+  .callout {
+    padding: 12px 14px;
+    margin: 16px 0;
+  }
+  .site-footer {
+    padding: 24px 0 44px;
+    margin-top: 14px;
+  }
+  .site-footer .cols {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 

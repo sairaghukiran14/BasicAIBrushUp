@@ -197,3 +197,21 @@ figure svg.chart {
   color: var(--accent);
   font-weight: 500;
 }
+
+@media (max-width: 620px) {
+  .chart-legend {
+    gap: 12px;
+  }
+  .chart-legend span {
+    font-size: 10px;
+  }
+  .stages li {
+    padding-left: 36px;
+    font-size: 13.5px;
+  }
+  .spec-note {
+    padding: 10px 12px;
+    font-size: 11px;
+    word-break: break-word;
+  }
+}

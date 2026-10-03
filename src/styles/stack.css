@@ -186,3 +186,20 @@
   font-size: 12px;
   color: var(--accent);
 }
+
+@media (max-width: 620px) {
+  .parts {
+    grid-template-columns: 1fr;
+  }
+  .part {
+    padding: 16px 14px 18px;
+  }
+  .steps li {
+    padding-left: 36px;
+    font-size: 13.5px;
+  }
+  .rules li {
+    padding-left: 24px;
+    font-size: 13.5px;
+  }
+}

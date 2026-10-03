@@ -84,11 +84,17 @@ The entire web application is pre-rendered via **Next.js 16 (Turbopack SSG)** in
 - **Open-Weight Models & Fine-Tuning**: Quantization formats (GGUF, AWQ, EXL2), LoRA/QLoRA hyperparameter setups, and serving with vLLM / Ollama.
 
 ### 5. Python Foundations & Concurrency
-- **30 Worked Production Snippets**: Real Python patterns for high-throughput AI engineering:
-  - Memory-efficient streaming with generators & async iterators.
-  - `asyncio` gathering, task groups, bounded worker pools, and rate-limiting token buckets.
-  - Zero-copy tensor serialization, memory mapping, and dataclass caching.
-  - Critical Python traps (GIL misconceptions, closure scopes, mutable defaults).
+- **37 Worked Production Snippets**: From bedrock language mechanics to high-throughput concurrency:
+  - **Memory & Identity**: Object mutability, reference assignment, `is` vs `==`, and deep copying nested states.
+  - **Text & Unicode**: String cleaning, prefix/suffix removal, and NFKC unicode normalization for consistent embedding tokens.
+  - **Scope & Closures**: LEGB resolution rules, `nonlocal` state counters, and loop-variable late-binding capture fixes.
+  - **Object-Oriented Design**: Clean OOP, `__slots__` memory optimization (~60% RAM reduction), `__hash__` and `@property`.
+  - **Iterators & Builtins**: The iterator protocol, safe unpacking with `zip(strict=True)`, `enumerate`, and multi-attribute sorting.
+  - **Robust Exception Flow**: `try / except / else / finally` mechanics and causal traceback chaining (`raise ... from err`).
+  - **High-Performance Records**: `@dataclass(slots=True, frozen=True)` for millions of in-memory chunk objects.
+  - **Generators & Batching**: Memory-efficient lazy iterators and batching pipelines with `itertools`.
+  - **Async & Concurrency**: `asyncio` TaskGroups, semaphores, bounded worker pools, and streaming responses.
+  - **Production Traps**: 12 costly production traps (GIL misunderstandings, async caching, mutable defaults, float money).
 
 ### 6. Classical Machine Learning
 - **Mathematical Foundations**: Linear algebra, matrix factorization, distance metrics (Cosine, Euclidean, Dot Product, Manhattan).
